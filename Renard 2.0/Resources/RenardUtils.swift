@@ -19,7 +19,8 @@ struct AssetObject{
     var isSelected: Bool?
 }
 
-struct FormatObject: Comparable, Hashable{
+struct FormatObject: Comparable, Hashable, Identifiable{
+    var id: UUID
     var imageType: ImageType
     var count: Int
     

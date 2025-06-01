@@ -40,7 +40,7 @@ class MainDashboardViewModel: ObservableObject {
             formatCountDict[type, default: 0] += 1
         }
     
-        let formatsCount = formatCountDict.map { FormatObject(imageType: $0.key, count: $0.value) }
+        let formatsCount = formatCountDict.map { FormatObject(id: UUID(), imageType: $0.key, count: $0.value) }
 
         DispatchQueue.main.async {
             self.photos = tempPhotos

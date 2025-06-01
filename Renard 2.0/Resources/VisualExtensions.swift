@@ -30,7 +30,7 @@ struct TitleFormatView: View{
 struct RenardButton: View {
     let title: LocalizedStringKey
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -50,26 +50,25 @@ struct RenardSectionList: View{
     var body: some View {
         List{
             ForEach(sections) { section in
-                Section(header:
-                            Text(LocalizedStringKey(section.title))
-                    .foregroundColor(.white)
-                    .font(.headline)
-                   
-                    .background(Color.renardDarkBlue)
-                ) {
+                HStack{
+                    Text(LocalizedStringKey(section.title))
+                        .foregroundColor(.white)
+                        .font(.headline)
+                        .background(Color.renardDarkBlue)
+                    
+                    Spacer()
+                    
                     ForEach(section.components, id: \String.self) { component in
                         Text(LocalizedStringKey(component))
                             .foregroundColor(.white)
                             .font(.custom("Montserrat-Medium", size: 16))
                             .multilineTextAlignment(.leading)
                             .padding(.vertical, 8.0)
-                            .frame(maxWidth: .infinity)
                             .padding(.horizontal, 10)
-                            .background(Color.renardBoldBlue)
-                            .listRowBackground(Color.renardDarkBlue)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
+                .listRowBackground(Color.renardDarkBlue)
+                .background(Color.renardDarkBlue)
             }
         }
         .listStyle(.plain)
@@ -116,4 +115,12 @@ extension Color {
     static let renardBackgroundHeavy = Color(red: 9/255, green: 12/255, blue: 17/255)
     static let renardDarkBlue = Color(red: 48/255, green: 68/255, blue: 99/255)
     static let renardBoldBlue = Color(red: 91/255, green: 123/255, blue: 173/255)
+    
+    static var random: Color {
+           Color(
+               red: .random(in: 0...1),
+               green: .random(in: 0...1),
+               blue: .random(in: 0...1)
+           )
+       }
 }

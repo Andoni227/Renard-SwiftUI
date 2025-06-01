@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct GalleryStatistics: View {
     @EnvironmentObject var dashboardVM: MainDashboardViewModel
@@ -15,8 +16,25 @@ struct GalleryStatistics: View {
         let statsVM = StatisticsViewModel(photos: dashboardVM.photos)
         ZStack{
             Color.renardDarkBlue.ignoresSafeArea()
-            RenardSectionList(sections: statsVM.getSections())
-                .padding()
+            VStack{
+                if #available(iOS 17.0, *) {
+                    Chart(statsVM.formatCounts, id: \.id) { element in
+                        SectorMark(
+                            angle: .value("Value", element.count),
+                            innerRadius: .ratio(0.618),
+                            outerRadius: .inset(10),
+                            angularInset: 1
+                        )
+                        .cornerRadius(4)
+                        .foregroundStyle(by: .value("", element.imageType.name))
+                    }
+                    .preferredColorScheme(.dark)
+                    .padding()
+                    .frame(width: 350, height: 350)
+                }
+                RenardSectionList(sections: statsVM.getSections())
+                    .padding()
+            }
         }
         .background(Color.renardDarkBlue.ignoresSafeArea())
         .toolbarBackground(Color.renardDarkBlue, for: .navigationBar)

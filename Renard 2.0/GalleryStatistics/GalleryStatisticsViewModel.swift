@@ -26,7 +26,7 @@ class StatisticsViewModel: ObservableObject {
         }
 
         let sorted = countDict
-            .map { FormatObject(imageType: $0.key, count: $0.value) }
+            .map { FormatObject(id: UUID(), imageType: $0.key, count: $0.value) }
             .sorted(by: { $0.count > $1.count })
 
         self.formatCounts = sorted
