@@ -12,6 +12,7 @@ class MainDashboardViewModel: ObservableObject {
     @Published var photos: [AssetObject] = []
     @Published var availableFormats: [FormatObject] = []
     @Published var selectedFormat: ImageType? = nil
+    @Published var isOnSelection: Bool = false
     
     init() { }
     
@@ -23,6 +24,10 @@ class MainDashboardViewModel: ObservableObject {
                 self.loadPhotos()
             }
         }
+    }
+    
+    func isSelecting(_ value: Bool){
+        isOnSelection = value
     }
     
     private func loadPhotos() {

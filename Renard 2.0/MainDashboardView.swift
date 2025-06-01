@@ -32,8 +32,8 @@ struct MainDashboardView: View {
                     }
                     .buttonStyle(.automatic)
                     Spacer()
-                    Button("selectTxt") {
-                        print("Seleccionar")
+                    Button(viewModel.isOnSelection ? "cancel" : "selectTxt") {
+                        viewModel.isOnSelection.toggle()
                     }
                     .font(.custom("Montserrat-Medium", size: 15.0))
                     .tint(.white)
