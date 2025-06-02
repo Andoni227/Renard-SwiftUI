@@ -34,6 +34,9 @@ struct MainDashboardView: View {
                     Spacer()
                     Button(viewModel.isOnSelection ? "cancel" : "selectTxt") {
                         viewModel.isOnSelection.toggle()
+                        if !viewModel.isOnSelection {
+                            viewModel.clearSelection()
+                        }
                     }
                     .font(.custom("Montserrat-Medium", size: 15.0))
                     .tint(.white)
@@ -71,7 +74,12 @@ struct MainDashboardView: View {
                     ScrollView(showsIndicators: true) {
                         LazyVGrid(columns: galleryColumns, spacing: 10) {
                             ForEach(selectedPhotos, id: \.asset.localIdentifier) { assetObject in
-                                PhotoThumbnailView(asset: assetObject.asset, size: itemWidth)
+                                PhotoThumbnailView(asset: assetObject.asset, size: itemWidth, isSelected: viewModel.selectedAssetIDs.contains(assetObject.asset.localIdentifier))
+                                    .onTapGesture {
+                                        if viewModel.isOnSelection {
+                                            viewModel.toggleSelection(of: assetObject.asset)
+                                        }
+                                    }
                             }
                         }
                         .padding()

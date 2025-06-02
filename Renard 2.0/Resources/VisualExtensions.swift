@@ -52,6 +52,7 @@ struct RenardSectionList: View{
             ForEach(sections) { section in
                 HStack{
                     Text(LocalizedStringKey(section.title))
+                        .font(.custom("Montserrat-Bold", size: 16))
                         .foregroundColor(.white)
                         .font(.headline)
                         .background(Color.renardDarkBlue)

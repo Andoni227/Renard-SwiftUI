@@ -20,7 +20,7 @@ struct GalleryStatistics: View {
                 if #available(iOS 17.0, *) {
                     Chart(statsVM.formatCounts, id: \.id) { element in
                         SectorMark(
-                            angle: .value("Value", element.count),
+                            angle: .value("", element.count),
                             innerRadius: .ratio(0.618),
                             outerRadius: .inset(10),
                             angularInset: 1

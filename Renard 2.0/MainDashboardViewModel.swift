@@ -13,8 +13,13 @@ class MainDashboardViewModel: ObservableObject {
     @Published var availableFormats: [FormatObject] = []
     @Published var selectedFormat: ImageType? = nil
     @Published var isOnSelection: Bool = false
+    @Published var selectedAssetIDs = Set<String>() 
     
     init() { }
+    
+    func clearSelection() {
+        selectedAssetIDs.removeAll()
+    }
     
     func requestAuthorizationAndLoad() {
         guard photos.isEmpty else { return }
@@ -26,8 +31,13 @@ class MainDashboardViewModel: ObservableObject {
         }
     }
     
-    func isSelecting(_ value: Bool){
-        isOnSelection = value
+    func toggleSelection(of asset: PHAsset) {
+        let id = asset.localIdentifier
+        if selectedAssetIDs.contains(id) {
+            selectedAssetIDs.remove(id)
+        } else {
+            selectedAssetIDs.insert(id)
+        }
     }
     
     private func loadPhotos() {
