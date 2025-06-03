@@ -365,6 +365,46 @@
         }
       }
     },
+    "deleteAfterSave %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete original images after saving (%@)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar imágenes originales después de guardar (%@)"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar imágenes originales después de guardar (%@)"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장 후 원본 이미지 삭제 (%@)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluir imagens originais após salvar (%@)"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar imagens originais após guardar (%@)"
+          }
+        }
+      }
+    },
     "deleteAfterSaveOne" : {
       "extractionState" : "manual",
       "localizations" : {

@@ -11,15 +11,34 @@ import Photos
 class MainDashboardViewModel: ObservableObject {
     @Published var photos: [AssetObject] = []
     @Published var availableFormats: [FormatObject] = []
-    @Published var selectedFormat: ImageType? = nil
+    @Published var selectedFormat: ImageType? = nil{
+        didSet{
+            clearSelection()
+        }
+    }
     @Published var isOnSelection: Bool = false
-    @Published var selectedAssetIDs = Set<String>()
+    @Published var selectedAssetsSize: String = ""
+    @Published var selectedAssetIDs = Set<String>(){
+        didSet{
+            setImageSize()
+        }
+    }
     @Published var deleteAfterSave: Bool = false
     
     init() { }
     
     func clearSelection() {
         selectedAssetIDs.removeAll()
+    }
+    
+    func setImageSize(){
+        var totalSize: Int64 = Int64(0.0)
+        for image in selectedAssetIDs{
+            if let img = photos.filter({ $0.asset.localIdentifier == image }).first{
+                totalSize += Int64(img.asset.getSize(format: .raw)) ?? 0
+            }
+        }
+        selectedAssetsSize = "\(totalSize.bytesToReadableSize())"
     }
     
     func requestAuthorizationAndLoad() {

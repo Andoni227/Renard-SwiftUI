@@ -78,3 +78,50 @@ enum ImageType: String{
             }
         }
 }
+
+extension PHAsset{
+    func getSize(format: SizeFormat? = .normal) -> String{
+        let resources = PHAssetResource.assetResources(for: self)
+        var sizeOnDisk: Int64? = 0
+        
+        if let resource = resources.first {
+            let unsignedInt64 = resource.value(forKey: "fileSize") as? CLong
+            sizeOnDisk = Int64(bitPattern: UInt64(unsignedInt64!))
+        }
+        
+        let formatter:ByteCountFormatter = ByteCountFormatter()
+        formatter.countStyle = .binary
+
+        if let estimatedSize = sizeOnDisk{
+            switch format{
+            case .normal:
+                return estimatedSize.bytesToReadableSize()
+            case .kb:
+                return String(Double(estimatedSize)/1000.0)
+            case .mb:
+                return String(Double(estimatedSize)/1000000.0)
+            case .raw:
+                return String(estimatedSize)
+            case .none:
+                return NSLocalizedString("unknown", comment: "")
+            }
+        }else{
+            return NSLocalizedString("unknown", comment: "")
+        }
+    }
+}
+
+extension Int64{
+    func bytesToReadableSize() -> String{
+        let formatter:ByteCountFormatter = ByteCountFormatter()
+        formatter.countStyle = .binary
+        return formatter.string(fromByteCount: self)
+    }
+}
+
+enum SizeFormat{
+    case normal
+    case mb
+    case kb
+    case raw
+}

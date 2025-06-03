@@ -89,7 +89,7 @@ struct MainDashboardView: View {
             }
             .overlay{
                 VStack {
-                    if viewModel.isOnSelection{
+                    if viewModel.isOnSelection && viewModel.selectedAssetIDs.count > 0{
                         VStack{
                             Spacer()
                             HStack {
@@ -118,7 +118,7 @@ struct MainDashboardView: View {
                             }
                             
                             HStack{
-                                RNRDText(text: "deleteAfterSave")
+                                RNRDText(text: "deleteAfterSave \(viewModel.selectedAssetsSize)")
                                     .background(Color.renardDarkBlue)
                                     .padding(.vertical, 15.0)
                                 Toggle("", isOn: $viewModel.deleteAfterSave)
