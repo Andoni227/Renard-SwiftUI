@@ -24,6 +24,7 @@ class MainDashboardViewModel: ObservableObject {
         }
     }
     @Published var deleteAfterSave: Bool = false
+    private var photosMap: [String: AssetObject] = [:]
     
     init() { }
     
@@ -31,15 +32,23 @@ class MainDashboardViewModel: ObservableObject {
         selectedAssetIDs.removeAll()
     }
     
-    func setImageSize(){
-        var totalSize: Int64 = Int64(0.0)
-        for image in selectedAssetIDs{
-            if let img = photos.filter({ $0.asset.localIdentifier == image }).first{
-                totalSize += Int64(img.asset.getSize(format: .raw)) ?? 0
+    private func setImageSize() {
+        let ids = Array(selectedAssetIDs)
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            var total: Int64 = 0
+            for id in ids {
+                if let assetObj = self.photosMap[id] {
+                    total += Int64(assetObj.asset.getSize(format: .raw)) ?? 0
+                }
+            }
+            let readable = total.bytesToReadableSize()
+            DispatchQueue.main.async {
+                self.selectedAssetsSize = readable
             }
         }
-        selectedAssetsSize = "\(totalSize.bytesToReadableSize())"
     }
+
     
     func requestAuthorizationAndLoad() {
         guard photos.isEmpty else { return }
@@ -74,11 +83,12 @@ class MainDashboardViewModel: ObservableObject {
             tempPhotos.append(AssetObject(asset: asset, format: type, resolution: resolution))
             formatCountDict[type, default: 0] += 1
         }
-    
+        
         let formatsCount = formatCountDict.map { FormatObject(id: UUID(), imageType: $0.key, count: $0.value) }
-
+        
         DispatchQueue.main.async {
             self.photos = tempPhotos
+            self.photosMap = Dictionary(uniqueKeysWithValues: tempPhotos.map { ($0.asset.localIdentifier, $0) })
             self.availableFormats = formatsCount.sorted(by: { $0.count > $1.count })
             self.selectedFormat = self.availableFormats.first?.imageType ?? nil
         }

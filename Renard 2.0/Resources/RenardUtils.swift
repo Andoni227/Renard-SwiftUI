@@ -46,37 +46,37 @@ enum ImageType: String{
     case AVIF = "public.avif"
     
     var name: String {
-            switch self {
-            case .RAW:
-                return "RAW"
-            case .RAF:
-                return "RAF"
-            case .ARW:
-                return "ARW"
-            case .NEF:
-                 return "NEF"
-            case .CR3:
-                return "CR3"
-            case .GIF:
-                return "GIF"
-            case .JPG:
-                return "JPG"
-            case .HEIC:
-                return "HEIC"
-            case .PNG:
-                return "PNG"
-            case .TIFF:
-                return "TIFF"
-            case .WEBP:
-                return "WEBP"
-            case .AVIF:
-                return "AVIF"
-            case .UNOWNED:
-                return "RAW"
-            case .NOTIMAGE:
-                return "Desconocido"
-            }
+        switch self {
+        case .RAW:
+            return "RAW"
+        case .RAF:
+            return "RAF"
+        case .ARW:
+            return "ARW"
+        case .NEF:
+            return "NEF"
+        case .CR3:
+            return "CR3"
+        case .GIF:
+            return "GIF"
+        case .JPG:
+            return "JPG"
+        case .HEIC:
+            return "HEIC"
+        case .PNG:
+            return "PNG"
+        case .TIFF:
+            return "TIFF"
+        case .WEBP:
+            return "WEBP"
+        case .AVIF:
+            return "AVIF"
+        case .UNOWNED:
+            return "RAW"
+        case .NOTIMAGE:
+            return "Desconocido"
         }
+    }
 }
 
 extension PHAsset{
@@ -91,7 +91,7 @@ extension PHAsset{
         
         let formatter:ByteCountFormatter = ByteCountFormatter()
         formatter.countStyle = .binary
-
+        
         if let estimatedSize = sizeOnDisk{
             switch format{
             case .normal:
