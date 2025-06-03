@@ -89,6 +89,31 @@ struct MainDashboardView: View {
                 if viewModel.isOnSelection{
                     VStack{
                         Spacer()
+                        HStack {
+                            Spacer()
+                            ZStack{
+                                Color.renardBoldBlue
+                                    .frame(width: 130.0, height: 40.0)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .padding(.horizontal, 10.0)
+                                
+                                Button(action: {
+                                    print("saveImages")
+                                }) {
+                                    Image(systemName: "square.and.arrow.down.fill")
+                                        .renderingMode(.template)
+                                        .imageScale(.large)
+                                        .tint(.white)
+                                    
+                                    Text("save")
+                                        .font(.custom(RenardFont.Bold.rawValue, size: 15.0))
+                                        .foregroundColor(.white)
+                                }
+                                .background(Color.renardBoldBlue)
+                                .padding()
+                            }
+                        }
+                        
                         HStack{
                             RNRDText(text: "deleteAfterSave")
                                 .background(Color.renardDarkBlue)
