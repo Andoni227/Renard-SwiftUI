@@ -33,7 +33,9 @@ struct MainDashboardView: View {
                     .buttonStyle(.automatic)
                     Spacer()
                     Button(viewModel.isOnSelection ? "cancel" : "selectTxt") {
-                        viewModel.isOnSelection.toggle()
+                        withAnimation{
+                            viewModel.isOnSelection.toggle()
+                        }
                         if !viewModel.isOnSelection {
                             viewModel.clearSelection()
                         }
@@ -86,46 +88,50 @@ struct MainDashboardView: View {
                 }
             }
             .overlay{
-                if viewModel.isOnSelection{
-                    VStack{
-                        Spacer()
-                        HStack {
+                VStack {
+                    if viewModel.isOnSelection{
+                        VStack{
                             Spacer()
-                            ZStack{
-                                Color.renardBoldBlue
-                                    .frame(width: 130.0, height: 40.0)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .padding(.horizontal, 10.0)
-                                
-                                Button(action: {
-                                    print("saveImages")
-                                }) {
-                                    Image(systemName: "square.and.arrow.down.fill")
-                                        .renderingMode(.template)
-                                        .imageScale(.large)
-                                        .tint(.white)
+                            HStack {
+                                Spacer()
+                                ZStack{
+                                    Color.renardBoldBlue
+                                        .frame(width: 130.0, height: 40.0)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .padding(.horizontal, 10.0)
                                     
-                                    Text("save")
-                                        .font(.custom(RenardFont.Bold.rawValue, size: 15.0))
-                                        .foregroundColor(.white)
+                                    Button(action: {
+                                        print("saveImages")
+                                    }) {
+                                        Image(systemName: "square.and.arrow.down.fill")
+                                            .renderingMode(.template)
+                                            .imageScale(.large)
+                                            .tint(.white)
+                                        
+                                        Text("save")
+                                            .font(.custom(RenardFont.Bold.rawValue, size: 15.0))
+                                            .foregroundColor(.white)
+                                    }
+                                    .background(Color.renardBoldBlue)
+                                    .padding()
                                 }
-                                .background(Color.renardBoldBlue)
-                                .padding()
                             }
+                            
+                            HStack{
+                                RNRDText(text: "deleteAfterSave")
+                                    .background(Color.renardDarkBlue)
+                                    .padding(.vertical, 15.0)
+                                Toggle("", isOn: $viewModel.deleteAfterSave)
+                                    .frame(width: 100.0)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 8.0)
+                            .background(Color.renardDarkBlue)
                         }
-                        
-                        HStack{
-                            RNRDText(text: "deleteAfterSave")
-                                .background(Color.renardDarkBlue)
-                                .padding(.vertical, 15.0)
-                            Toggle("", isOn: $viewModel.deleteAfterSave)
-                                .frame(width: 100.0)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 8.0)
-                        .background(Color.renardDarkBlue)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
                 }
+                .animation(.easeInOut(duration: 0.3), value: viewModel.isOnSelection)
             }
         }
         .sheet(isPresented: $showFAQ) {
