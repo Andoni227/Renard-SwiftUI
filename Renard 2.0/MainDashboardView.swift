@@ -38,13 +38,11 @@ struct MainDashboardView: View {
                             viewModel.clearSelection()
                         }
                     }
-                    .font(.custom("Montserrat-Medium", size: 15.0))
+                    .font(.custom(RenardFont.Medium.rawValue, size: 15.0))
                     .tint(.white)
                 }
                 .overlay(
-                    Text("Renard")
-                        .font(.custom("Montserrat-Medium", size: 15.0))
-                        .foregroundColor(.white),
+                    RNRDText(text: "Renard"),
                     alignment: .center
                 )
                 .padding()
@@ -87,6 +85,23 @@ struct MainDashboardView: View {
                     .background(Color.renardBackgroundHeavy)
                 }
             }
+            .overlay{
+                if viewModel.isOnSelection{
+                    VStack{
+                        Spacer()
+                        HStack{
+                            RNRDText(text: "deleteAfterSave")
+                                .background(Color.renardDarkBlue)
+                                .padding(.vertical, 15.0)
+                            Toggle("", isOn: $viewModel.deleteAfterSave)
+                                .frame(width: 100.0)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 8.0)
+                        .background(Color.renardDarkBlue)
+                    }
+                }
+            }
         }
         .sheet(isPresented: $showFAQ) {
             NavigationStack {
@@ -94,9 +109,7 @@ struct MainDashboardView: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .principal) {
-                            Text("Renard")
-                                .font(.custom("Montserrat-Medium", size: 16))
-                                .foregroundColor(.white)
+                            RNRDText(text: "Renard", size: 16)
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
                             NavigationLink(value: Router.preferences) {

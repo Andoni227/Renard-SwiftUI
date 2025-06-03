@@ -6,7 +6,6 @@
 //
 import Photos
 
-
 enum Router: Hashable{
     case preferences
     case statistics
@@ -79,4 +78,3 @@ enum ImageType: String{
             }
         }
 }
-

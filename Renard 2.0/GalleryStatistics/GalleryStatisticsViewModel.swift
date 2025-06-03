@@ -37,14 +37,14 @@ class StatisticsViewModel: ObservableObject {
     func getSections() -> RenardSectionElements{
         var sections: RenardSectionElements = []
         
-        let formatsSectionElements = formatCounts.map({ "\($0.imageType.name) \($0.count)" })
+        let formatsSectionElements = formatCounts.map({ RenardSectionElement(id: UUID(), title: $0.imageType.name, components: [$0.count.description]) })
         
         sections.append(RenardSectionElement(id: UUID(), title: "MaxResPhoto", components: ["\(maxResPhoto?.resolution ?? 0) MP"]))
         sections.append(RenardSectionElement(id: UUID(), title: "MinusResPhoto", components: ["\(lowResPhoto?.resolution ?? 0) MP"]))
         sections.append(RenardSectionElement(id: UUID(), title: "MostCommonFormat", components: [mostCommonFormat?.name ?? "-"]))
         sections.append(RenardSectionElement(id: UUID(), title: "LessCommonFormat", components: [lessCommonFormat?.name ?? "-"]))
         sections.append(RenardSectionElement(id: UUID(), title: "TotalPhotos", components: ["\(totalPhotos)"]))
-        sections.append(RenardSectionElement(id: UUID(), title: "CountbyFormat", components: formatsSectionElements))
+        sections += formatsSectionElements
         
         return sections
     }

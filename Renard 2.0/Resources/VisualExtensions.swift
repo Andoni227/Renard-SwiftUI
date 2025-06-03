@@ -27,6 +27,20 @@ struct TitleFormatView: View{
     }
 }
 
+struct RNRDText: View{
+    var text: LocalizedStringKey
+    var alignment: TextAlignment = .leading
+    var size: CGFloat = 15.0
+    var font: RenardFont = RenardFont.Medium
+    
+    var body: some View{
+        Text(text)
+        .font(.custom(font.rawValue, size: size))
+        .foregroundColor(.white)
+        .multilineTextAlignment(alignment)
+    }
+}
+
 struct RenardButton: View {
     let title: LocalizedStringKey
     let action: () -> Void
@@ -124,4 +138,11 @@ extension Color {
                blue: .random(in: 0...1)
            )
        }
+}
+
+enum RenardFont: String{
+    case Light = "Montserrat-Light"
+    case Medium = "Montserrat-Medium"
+    case Bold = "Montserrat-Bold"
+    case Regular = "Montserrat-Regular"
 }

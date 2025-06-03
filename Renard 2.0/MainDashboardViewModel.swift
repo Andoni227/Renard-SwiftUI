@@ -13,7 +13,8 @@ class MainDashboardViewModel: ObservableObject {
     @Published var availableFormats: [FormatObject] = []
     @Published var selectedFormat: ImageType? = nil
     @Published var isOnSelection: Bool = false
-    @Published var selectedAssetIDs = Set<String>() 
+    @Published var selectedAssetIDs = Set<String>()
+    @Published var deleteAfterSave: Bool = false
     
     init() { }
     
