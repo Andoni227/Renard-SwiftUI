@@ -15,6 +15,7 @@ class PhotoPreviewViewModel: ObservableObject{
         }
     }
     @Published var imgPreview: UIImage = UIImage()
+    @Published var downloadProgress: Int = 0
     
     init() {
         self.shouldDeleteAfterSave = UserDefaults.standard.bool(forKey: "deleteAfterSave")
@@ -24,15 +25,25 @@ class PhotoPreviewViewModel: ObservableObject{
         let manager = PHCachingImageManager()
         let options = PHImageRequestOptions()
         options.isSynchronous = false
-        options.deliveryMode = .opportunistic
+        options.deliveryMode = .highQualityFormat
+        options.isNetworkAccessAllowed = true
+        options.progressHandler = { progress, _, _, _ in
+            print("Progreso de descarga: \(progress)")
+        }
         
-        let size = CGSize(width: 200, height: 230)
         manager.requestImage(for: asset,
-                             targetSize: size,
+                             targetSize: PHImageManagerMaximumSize,
                              contentMode: .aspectFill,
-                             options: options) { result, _ in
-            if let result = result {
-                self.imgPreview = result
+                             options: options) { result, info in
+            
+            if let result = result,
+               let info = info,
+               info[PHImageResultIsInCloudKey] as? Bool != true,
+               info[PHImageCancelledKey] as? Bool != true,
+               info[PHImageErrorKey] == nil {
+                DispatchQueue.main.async {
+                    self.imgPreview = result
+                }
             }
         }
     }
