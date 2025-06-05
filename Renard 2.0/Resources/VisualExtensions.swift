@@ -130,6 +130,7 @@ extension Color {
     static let renardBackgroundHeavy = Color(red: 9/255, green: 12/255, blue: 17/255)
     static let renardDarkBlue = Color(red: 48/255, green: 68/255, blue: 99/255)
     static let renardBoldBlue = Color(red: 91/255, green: 123/255, blue: 173/255)
+    static let renardMediumBlue = Color(red: 74/255, green: 90/255, blue: 127/255)
     
     static var random: Color {
            Color(

@@ -10,6 +10,8 @@ import SwiftUI
 struct MainDashboardView: View {
     @StateObject private var viewModel = MainDashboardViewModel()
     @State private var showFAQ = false
+    @State private var showPreview = false
+    @State private var selectedAsset: AssetObject? = nil
     
     var galleryColumns: [GridItem] {
         let count = getElementsInScreen(for: 120.0)
@@ -78,6 +80,9 @@ struct MainDashboardView: View {
                                     .onTapGesture {
                                         if viewModel.isOnSelection {
                                             viewModel.toggleSelection(of: assetObject.asset)
+                                        }else{
+                                            selectedAsset = assetObject
+                                            showPreview = true
                                         }
                                     }
                             }
@@ -158,6 +163,13 @@ struct MainDashboardView: View {
                             }
                         }
                     }
+            }
+        }
+        .sheet(isPresented: $showPreview){
+            if let asset = selectedAsset {
+                NavigationStack{
+                    PhotoPreview(asset: asset)
+                }
             }
         }
         .onAppear {

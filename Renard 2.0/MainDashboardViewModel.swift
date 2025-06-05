@@ -31,25 +31,7 @@ class MainDashboardViewModel: ObservableObject {
     func clearSelection() {
         selectedAssetIDs.removeAll()
     }
-    
-    private func setImageSize() {
-        let ids = Array(selectedAssetIDs)
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            var total: Int64 = 0
-            for id in ids {
-                if let assetObj = self.photosMap[id] {
-                    total += Int64(assetObj.asset.getSize(format: .raw)) ?? 0
-                }
-            }
-            let readable = total.bytesToReadableSize()
-            DispatchQueue.main.async {
-                self.selectedAssetsSize = readable
-            }
-        }
-    }
 
-    
     func requestAuthorizationAndLoad() {
         guard photos.isEmpty else { return }
         PHPhotoLibrary.requestAuthorization { status in
@@ -91,6 +73,23 @@ class MainDashboardViewModel: ObservableObject {
             self.photosMap = Dictionary(uniqueKeysWithValues: tempPhotos.map { ($0.asset.localIdentifier, $0) })
             self.availableFormats = formatsCount.sorted(by: { $0.count > $1.count })
             self.selectedFormat = self.availableFormats.first?.imageType ?? nil
+        }
+    }
+    
+    private func setImageSize() {
+        let ids = Array(selectedAssetIDs)
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            var total: Int64 = 0
+            for id in ids {
+                if let assetObj = self.photosMap[id] {
+                    total += Int64(assetObj.asset.getSize(format: .raw)) ?? 0
+                }
+            }
+            let readable = total.bytesToReadableSize()
+            DispatchQueue.main.async {
+                self.selectedAssetsSize = readable
+            }
         }
     }
 }
