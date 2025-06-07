@@ -23,8 +23,7 @@ struct PhotoPreview: View {
                     .scaledToFit()
                     .padding(.bottom, 100.0)
             }else{
-                LottieView(name: "black_cat", loopMode: .loop)
-                    .padding(100.0)
+                LoadingView(progress: $viewModel.downloadProgress)
                     .padding(.bottom, 100.0)
             }
             

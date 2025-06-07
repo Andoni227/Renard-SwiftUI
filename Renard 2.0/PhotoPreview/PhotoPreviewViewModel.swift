@@ -17,7 +17,7 @@ class PhotoPreviewViewModel: ObservableObject{
     }
     @Published var imgPreview: UIImage?
     @Published var lottieCat: LottieAnimation?
-    @Published var downloadProgress: Int = 0
+    @Published var downloadProgress: Double = 0
     
     init() {
         self.shouldDeleteAfterSave = UserDefaults.standard.bool(forKey: "deleteAfterSave")
@@ -31,6 +31,9 @@ class PhotoPreviewViewModel: ObservableObject{
         options.deliveryMode = .highQualityFormat
         options.isNetworkAccessAllowed = true
         options.progressHandler = { progress, _, _, _ in
+            DispatchQueue.main.async{
+                self.downloadProgress = progress
+            }
             print("Progreso de descarga: \(progress)")
         }
         
