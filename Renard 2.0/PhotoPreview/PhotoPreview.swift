@@ -49,6 +49,7 @@ struct PhotoPreview: View {
                             .background(Color.renardMediumBlue)
                             .padding()
                     })
+                    .disabled(viewModel.imgPreview == nil)
                     .frame(height: 40.0)
                 }
                 .frame(maxWidth: .infinity)
