@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Photos
+import Lottie
 
 class PhotoPreviewViewModel: ObservableObject{
     @Published var shouldDeleteAfterSave: Bool {
@@ -14,11 +15,13 @@ class PhotoPreviewViewModel: ObservableObject{
             UserDefaults.standard.set(shouldDeleteAfterSave, forKey: "deleteAfterSave")
         }
     }
-    @Published var imgPreview: UIImage = UIImage()
+    @Published var imgPreview: UIImage?
+    @Published var lottieCat: LottieAnimation?
     @Published var downloadProgress: Int = 0
     
     init() {
         self.shouldDeleteAfterSave = UserDefaults.standard.bool(forKey: "deleteAfterSave")
+        
     }
     
     func getImagePreview(asset: PHAsset){

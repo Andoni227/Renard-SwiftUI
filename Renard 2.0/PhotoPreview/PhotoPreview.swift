@@ -6,20 +6,28 @@
 //
 
 import SwiftUI
-import Photos
+import Lottie
 
 struct PhotoPreview: View {
     @StateObject private var viewModel = PhotoPreviewViewModel()
+    @Environment(\.dismiss) var dismiss
     let asset: AssetObject
     
     var body: some View {
         ZStack{
             Color.renardBackgroundHeavy
                 .padding(.top, -30)
-            Image(uiImage: viewModel.imgPreview)
-                .resizable()
-                .scaledToFit()
-                .padding(.bottom, 100.0)
+            if let img = viewModel.imgPreview{
+                Image(uiImage: img)
+                    .resizable()
+                    .scaledToFit()
+                    .padding(.bottom, 100.0)
+            }else{
+                LottieView(name: "black_cat", loopMode: .loop)
+                    .padding(100.0)
+                    .padding(.bottom, 100.0)
+            }
+            
             VStack(spacing: 0.0){
                 Spacer()
                 HStack{
