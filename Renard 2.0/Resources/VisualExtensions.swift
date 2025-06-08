@@ -91,13 +91,6 @@ struct RenardSectionList: View{
     }
 }
 
-#Preview {
-    let elements: RenardSectionElements = [RenardSectionElement(id: UUID(), title: "TEST", components: ["pRUEBA", "TEST"]), RenardSectionElement(id: UUID(), title: "TEST", components: ["pRUEBA", "TEST"]), RenardSectionElement(id: UUID(), title: "TEST", components: ["pRUEBA", "TEST"])]
-    RenardSectionList(sections: elements)
-}
-
-
-
 typealias RenardSectionElements = [RenardSectionElement]
 struct RenardSectionElement: Identifiable{
     var id: UUID

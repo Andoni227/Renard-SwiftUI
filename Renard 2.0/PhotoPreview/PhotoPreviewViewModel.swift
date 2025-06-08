@@ -18,10 +18,11 @@ class PhotoPreviewViewModel: ObservableObject{
     @Published var imgPreview: UIImage?
     @Published var lottieCat: LottieAnimation?
     @Published var downloadProgress: Double = 0
+    @Published var isLoading: Bool = true
+    @Published var processComplete: Bool = false
     
     init() {
         self.shouldDeleteAfterSave = UserDefaults.standard.bool(forKey: "deleteAfterSave")
-        
     }
     
     func getImagePreview(asset: PHAsset){
@@ -49,8 +50,34 @@ class PhotoPreviewViewModel: ObservableObject{
                info[PHImageErrorKey] == nil {
                 DispatchQueue.main.async {
                     self.imgPreview = result
+                    self.isLoading = false
                 }
             }
+        }
+    }
+    
+    func convertImage(asset: PHAsset){
+        DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.main.async {
+                self.isLoading = true
+            }
+            
+            ImageConverter().convertAndSaveAssetAsHEIF(from: asset, completion: { success, error in
+                if self.shouldDeleteAfterSave{
+                    self.deleteAsset(assets: [asset], completion: { success, error in
+                        self.finishConvertion()
+                    })
+                }else{
+                    self.finishConvertion()
+                }
+            })
+        }
+    }
+    
+    private func finishConvertion(){
+        DispatchQueue.main.async {
+            self.isLoading = false
+            self.processComplete = true
         }
     }
 }

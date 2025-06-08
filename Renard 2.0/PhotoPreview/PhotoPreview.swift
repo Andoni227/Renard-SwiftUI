@@ -11,20 +11,24 @@ import Lottie
 struct PhotoPreview: View {
     @StateObject private var viewModel = PhotoPreviewViewModel()
     @Environment(\.dismiss) var dismiss
+    
     let asset: AssetObject
     
     var body: some View {
         ZStack{
             Color.renardBackgroundHeavy
                 .padding(.top, -30)
-            if let img = viewModel.imgPreview{
-                Image(uiImage: img)
-                    .resizable()
-                    .scaledToFit()
-                    .padding(.bottom, 100.0)
-            }else{
+            
+            if viewModel.isLoading{
                 LoadingView(progress: $viewModel.downloadProgress)
                     .padding(.bottom, 100.0)
+            }else{
+                if let img = viewModel.imgPreview{
+                    Image(uiImage: img)
+                        .resizable()
+                        .scaledToFit()
+                        .padding(.bottom, 100.0)
+                }
             }
             
             VStack(spacing: 0.0){
@@ -43,18 +47,23 @@ struct PhotoPreview: View {
                 HStack{
                     Spacer()
                     Button(action: {
-                        print("guardar")
+                        viewModel.convertImage(asset: asset.asset)
                     }, label: {
                         RNRDText(text: "save")
                             .background(Color.renardMediumBlue)
                             .padding()
                     })
-                    .disabled(viewModel.imgPreview == nil)
+                    .disabled(viewModel.isLoading)
                     .frame(height: 40.0)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 8.0)
                 .background(Color.renardMediumBlue)
+            }
+        }
+        .alert("saveSuccess", isPresented: $viewModel.processComplete) {
+            Button("accept", role: .cancel) {
+                dismiss()
             }
         }
         .background(Color.renardDarkBlue.ignoresSafeArea())
@@ -67,7 +76,7 @@ struct PhotoPreview: View {
             
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-                    @Environment(\.dismiss) var dismiss
+                    dismiss()
                 }){
                     Image(systemName:  "multiply")
                         .imageScale(.large)
