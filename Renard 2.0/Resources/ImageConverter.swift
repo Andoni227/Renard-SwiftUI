@@ -41,10 +41,10 @@ class ImageConverter{
             
             let compressionLevel = UserDefaults.standard.value(forKey: "compressionLevel")
             
-            print("_: INICIANDO COMPRESIÓN A NIVEL \(compressionLevel ?? 0.6)")
+            print("_: INICIANDO COMPRESIÓN A NIVEL \(compressionLevel ?? 0.7)")
             
             let compressionOptions: [CFString: Any] = [
-                kCGImageDestinationLossyCompressionQuality: compressionLevel ?? 0.6
+                kCGImageDestinationLossyCompressionQuality: compressionLevel ?? 0.7
             ]
             
             CGImageDestinationAddImageFromSource(destination, source, 0, compressionOptions as CFDictionary)
