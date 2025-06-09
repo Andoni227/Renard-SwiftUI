@@ -100,6 +100,27 @@ struct AboutAppView: View {
             }
             .padding()
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                RNRDText(text: "Renard", size: 16)
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(value: Router.preferences) {
+                    Image(systemName: "gearshape")
+                        .imageScale(.large)
+                        .foregroundColor(.white)
+                }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(value: Router.statistics) {
+                    Image(systemName:  "chart.bar.fill")
+                        .imageScale(.large)
+                        .foregroundColor(.white)
+                }
+            }
+        }
         .navigationDestination(for: Router.self, destination: { route in
             switch route{
             case .preferences:
