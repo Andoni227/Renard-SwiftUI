@@ -10,7 +10,6 @@ import SwiftUI
 struct MainDashboardView: View {
     @StateObject private var viewModel = MainDashboardViewModel()
     @State private var showFAQ = false
-    @State private var showPreview = false
     @State private var selectedAsset: AssetObject? = nil
     
     var galleryColumns: [GridItem] {
@@ -82,7 +81,6 @@ struct MainDashboardView: View {
                                             viewModel.toggleSelection(of: assetObject.asset)
                                         }else{
                                             selectedAsset = assetObject
-                                            showPreview = true
                                         }
                                     }
                             }
@@ -142,35 +140,12 @@ struct MainDashboardView: View {
         .sheet(isPresented: $showFAQ) {
             NavigationStack {
                 AboutAppView()
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .principal) {
-                            RNRDText(text: "Renard", size: 16)
-                        }
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(value: Router.preferences) {
-                                Image(systemName: "gearshape")
-                                    .imageScale(.large)
-                                    .foregroundColor(.white)
-                            }
-                        }
-                        
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(value: Router.statistics) {
-                                Image(systemName:  "chart.bar.fill")
-                                    .imageScale(.large)
-                                    .foregroundColor(.white)
-                            }
-                        }
-                    }
             }
         }
-        .sheet(isPresented: $showPreview){
-            if let asset = selectedAsset {
+        .sheet(item: $selectedAsset){ asset in
                 NavigationStack{
                     PhotoPreview(asset: asset)
                 }
-            }
         }
         .onAppear {
             viewModel.requestAuthorizationAndLoad()

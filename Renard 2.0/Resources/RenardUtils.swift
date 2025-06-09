@@ -11,7 +11,8 @@ enum Router: Hashable{
     case statistics
 }
 
-struct AssetObject{
+struct AssetObject: Identifiable{
+    var id: String { asset.localIdentifier }
     var asset: PHAsset
     var format: ImageType
     var resolution: Int
