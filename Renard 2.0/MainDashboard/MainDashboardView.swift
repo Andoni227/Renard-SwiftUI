@@ -93,44 +93,9 @@ struct MainDashboardView: View {
             .overlay{
                 VStack {
                     if viewModel.isOnSelection && viewModel.selectedAssetIDs.count > 0{
-                        VStack{
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                ZStack{
-                                    Color.renardBoldBlue
-                                        .frame(width: 130.0, height: 40.0)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                        .padding(.horizontal, 10.0)
-                                    
-                                    Button(action: {
-                                        print("saveImages")
-                                    }) {
-                                        Image(systemName: "square.and.arrow.down.fill")
-                                            .renderingMode(.template)
-                                            .imageScale(.large)
-                                            .tint(.white)
-                                        
-                                        Text("save")
-                                            .font(.custom(RenardFont.Bold.rawValue, size: 15.0))
-                                            .foregroundColor(.white)
-                                    }
-                                    .background(Color.renardBoldBlue)
-                                    .padding()
-                                }
-                            }
-                            
-                            HStack{
-                                RNRDText(text: "deleteAfterSave \(viewModel.selectedAssetsSize)")
-                                    .background(Color.renardDarkBlue)
-                                    .padding(.vertical, 15.0)
-                                Toggle("", isOn: $viewModel.deleteAfterSave)
-                                    .frame(width: 100.0)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 8.0)
-                            .background(Color.renardDarkBlue)
-                        }
+                        MainDashboardBottomView(photoSize: $viewModel.selectedAssetsSize, deleteAfterSave: $viewModel.deleteAfterSave, btnAction: {
+                            print("SAVE PHOTOS")
+                        })
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
                 }
