@@ -11,6 +11,7 @@ import Lottie
 struct PhotoPreview: View {
     @StateObject private var viewModel = PhotoPreviewViewModel()
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var dashboardVM: MainDashboardViewModel
     
     let asset: AssetObject
     
@@ -64,6 +65,7 @@ struct PhotoPreview: View {
         .alert("saveSuccess", isPresented: $viewModel.processComplete) {
             Button("accept", role: .cancel) {
                 dismiss()
+                dashboardVM.loadPhotos()
             }
         }
         .background(Color.renardDarkBlue.ignoresSafeArea())

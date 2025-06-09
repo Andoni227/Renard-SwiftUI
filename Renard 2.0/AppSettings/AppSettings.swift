@@ -10,6 +10,7 @@ import SwiftUI
 struct AppSettings: View {
     @AppStorage("deleteAfterSave") private var shouldDeleteAfterSave = false
     @Environment(\.dismiss) var dismiss
+    @StateObject private var viewModel = AppSettingsViewModel()
     
     var body: some View {
         ZStack{
@@ -28,14 +29,18 @@ struct AppSettings: View {
                 .background(Color.renardBoldBlue)
                 .padding(.vertical, 1.0)
                 HStack{
-                    Text("preferencesOption2")
-                        .font(.custom("Montserrat-Medium", size: 16))
-                        .foregroundColor(.white)
-                        .padding()
-                    Text(LocalizedStringKey("preferencesOption2_0"))
-                        .font(.custom("Montserrat-Medium", size: 16))
-                        .foregroundColor(.white)
-                    Spacer()
+                    Button(action: {
+                        viewModel.showCompressionOptions = true
+                    }, label: {
+                        Text("preferencesOption2")
+                            .font(.custom("Montserrat-Medium", size: 16))
+                            .foregroundColor(.white)
+                            .padding()
+                        Text(viewModel.getCompression())
+                            .font(.custom("Montserrat-Medium", size: 16))
+                            .foregroundColor(.white)
+                        Spacer()
+                    })
                 }
                 .background(Color.renardBoldBlue)
                 Spacer()
@@ -60,6 +65,12 @@ struct AppSettings: View {
                     .font(.custom("Montserrat-Medium", size: 16))
                     .foregroundColor(.white)
             }
+        }
+        .confirmationDialog("preferencesOption2", isPresented: $viewModel.showCompressionOptions, titleVisibility: .visible) {
+            Button("preferencesOption2_0") { viewModel.changeCompression(0.7) }
+            Button("preferencesOption2_1") { viewModel.changeCompression(0.8) }
+            Button("preferencesOption2_2") { viewModel.changeCompression(0.9) }
+            Button("cancel", role: .cancel) {}
         }
     }
 }

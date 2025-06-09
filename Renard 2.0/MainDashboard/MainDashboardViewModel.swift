@@ -51,7 +51,7 @@ class MainDashboardViewModel: ObservableObject {
         }
     }
     
-    private func loadPhotos() {
+    func loadPhotos() {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
