@@ -101,7 +101,9 @@ struct MainDashboardView: View {
                 VStack {
                     if viewModel.isOnSelection && viewModel.selectedAssetIDs.count > 0{
                         MainDashboardBottomView(photoSize: $viewModel.selectedAssetsSize, deleteAfterSave: $viewModel.deleteAfterSave, btnAction: {
-                            viewModel.startConvertion()
+                            Task {
+                                await viewModel.startConvertion()
+                            }
                         })
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                     }

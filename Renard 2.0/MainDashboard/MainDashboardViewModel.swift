@@ -34,7 +34,7 @@ class MainDashboardViewModel: ObservableObject {
     func clearSelection() {
         selectedAssetIDs.removeAll()
     }
-
+    
     func requestAuthorizationAndLoad() {
         guard photos.isEmpty else { return }
         PHPhotoLibrary.requestAuthorization { status in
@@ -54,7 +54,8 @@ class MainDashboardViewModel: ObservableObject {
         }
     }
     
-    func startConvertion() {
+    @MainActor
+    func startConvertion() async {
         self.isLoading = true
         
         var selectedAssets: [PHAsset] = []
@@ -65,15 +66,28 @@ class MainDashboardViewModel: ObservableObject {
             }
         }
         
-        ImageConverter().convertAndSaveAssetsAsHEIF(from: selectedAssets, progressHandler: { progress in
-            DispatchQueue.main.async {
-                self.convertionProgress = progress
-            }
-        }, completion: { success, errors in
-            self.isLoading = false
-            print("SUCCESS \(success.filter({ $0 == true }).count) ERRORS \(success.filter({ $0 == false }).count)")
-            print("ERRORES: \(errors)")
+        let results = await ImageConverter().convertAndSaveAssetsAsHEIF(from: selectedAssets, progressHandler: { progress in
+            self.convertionProgress = progress
         })
+        
+        print("SUCCESS \(results.filter({ $0.0 == true }).count) ERRORS \(results.filter({ $0.0 == false }).count)")
+        print("ERRORES: \(results.map({ $0.1 }))")
+        
+        if deleteAfterSave{
+            self.deleteAsset(assets: selectedAssets, completion: { success, error in
+                self.finishProcess()
+            })
+        }else{
+            finishProcess()
+        }
+        
+    }
+    
+    func finishProcess(){
+        DispatchQueue.main.async { [self] in
+            isLoading = false
+            loadPhotos()
+        }
     }
     
     func loadPhotos() {
