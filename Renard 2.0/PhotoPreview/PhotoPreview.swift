@@ -21,7 +21,7 @@ struct PhotoPreview: View {
                 .padding(.top, -30)
             
             if viewModel.isLoading{
-                LoadingView(progress: $viewModel.downloadProgress)
+                LoadingView(progress: $viewModel.downloadProgress, showLabel: false)
                     .padding(.bottom, 100.0)
             }else{
                 if let img = viewModel.imgPreview{

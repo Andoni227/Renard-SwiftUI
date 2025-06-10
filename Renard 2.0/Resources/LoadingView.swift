@@ -10,15 +10,22 @@ import Lottie
 
 struct LoadingView: View {
     @Binding var progress: Double
+    var showLabel: Bool
     
     var body: some View {
         VStack{
-            LottieView(name: "black_cat", loopMode: .loop)
-                .frame(width: 200.0, height: 200.0)
-                .padding()
+            HStack{
+                Spacer()
+                LottieView(name: "black_cat", loopMode: .loop)
+                    .frame(width: 200.0, height: 200.0)
+                    .padding()
+                Spacer()
+            }
             ProgressView(value: progress)
                 .padding()
+                .padding(.horizontal, 100.0)
                 .tint(.green)
+            RNRDText(text: "loading")
         }
     }
 }

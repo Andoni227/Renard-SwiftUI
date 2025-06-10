@@ -24,6 +24,9 @@ class MainDashboardViewModel: ObservableObject {
         }
     }
     @Published var deleteAfterSave: Bool = false
+    @Published var isLoading: Bool = false
+    @Published var convertionProgress: Double = 0.5
+    
     private var photosMap: [String: AssetObject] = [:]
     
     init() { }

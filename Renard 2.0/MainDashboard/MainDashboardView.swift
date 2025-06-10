@@ -53,7 +53,6 @@ struct MainDashboardView: View {
                 let rows = [
                     GridItem()
                 ]
-                
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHGrid(rows: rows, spacing: 10) {
                         ForEach(viewModel.availableFormats, id: \.self) { format in
@@ -65,29 +64,37 @@ struct MainDashboardView: View {
                 }
                 .padding(.vertical, -8)
                 
-                let selectedPhotos = viewModel.photos.filter { $0.format == viewModel.selectedFormat }
-                
-                GeometryReader { geo in
-                    let gridCount = getElementsInScreen(for: 120.0)
-                    let totalSpacing = CGFloat((gridCount - 1) * 10)
-                    let itemWidth = (geo.size.width - totalSpacing - 20) / CGFloat(gridCount)
-                    
-                    ScrollView(showsIndicators: true) {
-                        LazyVGrid(columns: galleryColumns, spacing: 10) {
-                            ForEach(selectedPhotos, id: \.asset.localIdentifier) { assetObject in
-                                PhotoThumbnailView(asset: assetObject.asset, size: itemWidth, isSelected: viewModel.selectedAssetIDs.contains(assetObject.asset.localIdentifier))
-                                    .onTapGesture {
-                                        if viewModel.isOnSelection {
-                                            viewModel.toggleSelection(of: assetObject.asset)
-                                        }else{
-                                            selectedAsset = assetObject
+                if viewModel.isLoading{
+                    Color.renardBackgroundHeavy
+                        .frame(height: 100.0)
+                        .padding(.top, 22.0)
+                    LoadingView(progress: $viewModel.convertionProgress, showLabel: true)
+                    Color.renardBackgroundHeavy
+                        .ignoresSafeArea()
+                }else{
+                    let selectedPhotos = viewModel.photos.filter { $0.format == viewModel.selectedFormat }
+                    GeometryReader { geo in
+                        let gridCount = getElementsInScreen(for: 120.0)
+                        let totalSpacing = CGFloat((gridCount - 1) * 10)
+                        let itemWidth = (geo.size.width - totalSpacing - 20) / CGFloat(gridCount)
+                        
+                        ScrollView(showsIndicators: true) {
+                            LazyVGrid(columns: galleryColumns, spacing: 10) {
+                                ForEach(selectedPhotos, id: \.asset.localIdentifier) { assetObject in
+                                    PhotoThumbnailView(asset: assetObject.asset, size: itemWidth, isSelected: viewModel.selectedAssetIDs.contains(assetObject.asset.localIdentifier))
+                                        .onTapGesture {
+                                            if viewModel.isOnSelection {
+                                                viewModel.toggleSelection(of: assetObject.asset)
+                                            }else{
+                                                selectedAsset = assetObject
+                                            }
                                         }
-                                    }
+                                }
                             }
+                            .padding()
                         }
-                        .padding()
+                        .background(Color.renardBackgroundHeavy)
                     }
-                    .background(Color.renardBackgroundHeavy)
                 }
             }
             .overlay{

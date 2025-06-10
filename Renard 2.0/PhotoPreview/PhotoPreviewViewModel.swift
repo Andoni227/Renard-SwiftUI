@@ -57,11 +57,9 @@ class PhotoPreviewViewModel: ObservableObject{
     }
     
     func convertImage(asset: PHAsset){
+        self.isLoading = true
+        
         DispatchQueue.global(qos: .userInitiated).async {
-            DispatchQueue.main.async {
-                self.isLoading = true
-            }
-            
             ImageConverter().convertAndSaveAssetAsHEIF(from: asset, completion: { success, error in
                 if self.shouldDeleteAfterSave{
                     self.deleteAsset(assets: [asset], completion: { success, error in
@@ -73,7 +71,7 @@ class PhotoPreviewViewModel: ObservableObject{
             })
         }
     }
-    
+     
     private func finishConvertion(){
         DispatchQueue.main.async {
             self.isLoading = false
