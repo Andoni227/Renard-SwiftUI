@@ -78,21 +78,39 @@ class ImageConverter{
         }
     }
     
-    func convertAndSaveAssetsAsHEIF(from assets: [PHAsset], completion: @escaping ([Bool], [Error?]) -> Void) {
-        var results: [Bool] = []
-        var errors: [Error?] = []
+    func convertAndSaveAssetsAsHEIF(
+        from assets: [PHAsset],
+        progressHandler: @escaping (Double) -> Void,
+        completion: @escaping ([Bool], [Error?]) -> Void
+    ) {
+        var results: [Bool] = Array(repeating: false, count: assets.count)
+        var errors: [Error?] = Array(repeating: nil, count: assets.count)
         
+        let total = assets.count
+        var completed = 0
+
+        let queue = DispatchQueue(label: "com.renard.heifconversion", attributes: .concurrent)
         let group = DispatchGroup()
-        
-        for asset in assets {
+        let lock = NSLock()
+
+        for (index, asset) in assets.enumerated() {
             group.enter()
-            convertAndSaveAssetAsHEIF(from: asset) { success, error in
-                results.append(success)
-                errors.append(error)
-                group.leave()
+            queue.async {
+                self.convertAndSaveAssetAsHEIF(from: asset) { success, error in
+                    lock.lock()
+                    results[index] = success
+                    errors[index] = error
+                    completed += 1
+                    let progress = Double(completed) / Double(total)
+                    DispatchQueue.main.async {
+                        progressHandler(progress)
+                    }
+                    lock.unlock()
+                    group.leave()
+                }
             }
         }
-        
+
         group.notify(queue: .main) {
             completion(results, errors)
         }

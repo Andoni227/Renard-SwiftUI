@@ -25,7 +25,7 @@ class MainDashboardViewModel: ObservableObject {
     }
     @Published var deleteAfterSave: Bool = false
     @Published var isLoading: Bool = false
-    @Published var convertionProgress: Double = 0.5
+    @Published var convertionProgress: Double = 0.0
     
     private var photosMap: [String: AssetObject] = [:]
     
@@ -57,9 +57,22 @@ class MainDashboardViewModel: ObservableObject {
     func startConvertion() {
         self.isLoading = true
         
-        DispatchQueue.main.async(qos: .userInitiated, execute: {
-            
-           
+        var selectedAssets: [PHAsset] = []
+        
+        for id in selectedAssetIDs{
+            if let asset = self.photosMap[id]?.asset{
+                selectedAssets.append(asset)
+            }
+        }
+        
+        ImageConverter().convertAndSaveAssetsAsHEIF(from: selectedAssets, progressHandler: { progress in
+            DispatchQueue.main.async {
+                self.convertionProgress = progress
+            }
+        }, completion: { success, errors in
+            self.isLoading = false
+            print("SUCCESS \(success.filter({ $0 == true }).count) ERRORS \(success.filter({ $0 == false }).count)")
+            print("ERRORES: \(errors)")
         })
     }
     
