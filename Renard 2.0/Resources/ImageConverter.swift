@@ -77,6 +77,26 @@ class ImageConverter{
             }
         }
     }
+    
+    func convertAndSaveAssetsAsHEIF(from assets: [PHAsset], completion: @escaping ([Bool], [Error?]) -> Void) {
+        var results: [Bool] = []
+        var errors: [Error?] = []
+        
+        let group = DispatchGroup()
+        
+        for asset in assets {
+            group.enter()
+            convertAndSaveAssetAsHEIF(from: asset) { success, error in
+                results.append(success)
+                errors.append(error)
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) {
+            completion(results, errors)
+        }
+    }
 }
 
 extension ObservableObject{

@@ -54,6 +54,15 @@ class MainDashboardViewModel: ObservableObject {
         }
     }
     
+    func startConvertion() {
+        self.isLoading = true
+        
+        DispatchQueue.main.async(qos: .userInitiated, execute: {
+            
+           
+        })
+    }
+    
     func loadPhotos() {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
