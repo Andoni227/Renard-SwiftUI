@@ -123,13 +123,7 @@ class ImageConverter{
 }
 
 extension ObservableObject{
-    func deleteAsset(assets: [PHAsset], completion: @escaping (Bool, Error?) -> Void){
-        var identifiers: [String] = []
-        
-        for asset in assets{
-            identifiers.append(asset.localIdentifier)
-        }
-        
+    func deleteAsset(identifiers: [String], completion: @escaping (Bool, Error?) -> Void){
         PHPhotoLibrary.shared().performChanges({
             let assetToDelete = PHAsset.fetchAssets(withLocalIdentifiers: identifiers, options: nil)
             var itemsToDelete: [PHAsset] = []

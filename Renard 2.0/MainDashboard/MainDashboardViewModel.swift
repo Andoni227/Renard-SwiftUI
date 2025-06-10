@@ -26,6 +26,7 @@ class MainDashboardViewModel: ObservableObject {
     @Published var deleteAfterSave: Bool = false
     @Published var isLoading: Bool = false
     @Published var convertionProgress: Double = 0.0
+    @Published var processComplete: Bool = false
     
     private var photosMap: [String: AssetObject] = [:]
     
@@ -73,20 +74,22 @@ class MainDashboardViewModel: ObservableObject {
         print("SUCCESS \(results.filter({ $0.0 == true }).count) ERRORS \(results.filter({ $0.0 == false }).count)")
         print("ERRORES: \(results.map({ $0.1 }))")
         
-        if deleteAfterSave{
-            self.deleteAsset(assets: selectedAssets, completion: { success, error in
-                self.finishProcess()
-            })
-        }else{
-            finishProcess()
-        }
-        
+        finishProcess()
     }
     
     func finishProcess(){
         DispatchQueue.main.async { [self] in
             isLoading = false
-            loadPhotos()
+            isOnSelection = false
+            if deleteAfterSave{
+                self.deleteAsset(identifiers: Array(selectedAssetIDs), completion: { success, error in
+                    DispatchQueue.main.async {
+                        self.processComplete = true
+                    }
+                })
+            }else{
+                processComplete = true
+            }
         }
     }
     

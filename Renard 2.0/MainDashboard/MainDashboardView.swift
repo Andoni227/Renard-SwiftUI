@@ -104,7 +104,7 @@ struct MainDashboardView: View {
                             Task {
                                 await viewModel.startConvertion()
                             }
-                        })
+                        }, btnDisabled: viewModel.isLoading)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
                 }
@@ -125,6 +125,12 @@ struct MainDashboardView: View {
             viewModel.requestAuthorizationAndLoad()
         }
         .environmentObject(viewModel)
+        .alert("saveSuccess", isPresented: $viewModel.processComplete) {
+            Button("accept", role: .cancel, action: {
+                viewModel.clearSelection()
+                viewModel.loadPhotos()
+            })
+        }
     }
 }
 

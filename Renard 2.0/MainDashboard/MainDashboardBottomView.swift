@@ -12,6 +12,7 @@ struct MainDashboardBottomView: View {
     @Binding var photoSize: String
     @Binding var deleteAfterSave: Bool
     var btnAction: () -> Void
+    var btnDisabled: Bool
     
     var body: some View {
         VStack{
@@ -34,6 +35,7 @@ struct MainDashboardBottomView: View {
                             .font(.custom(RenardFont.Bold.rawValue, size: 15.0))
                             .foregroundColor(.white)
                     }
+                    .disabled(btnDisabled)
                     .background(Color.renardBoldBlue)
                     .padding()
                 }

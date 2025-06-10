@@ -62,7 +62,7 @@ class PhotoPreviewViewModel: ObservableObject{
         DispatchQueue.global(qos: .userInitiated).async {
             ImageConverter().convertAndSaveAssetAsHEIF(from: asset, completion: { success, error in
                 if self.shouldDeleteAfterSave{
-                    self.deleteAsset(assets: [asset], completion: { success, error in
+                    self.deleteAsset(identifiers: [asset.localIdentifier], completion: { success, error in
                         self.finishConvertion()
                     })
                 }else{
