@@ -49,6 +49,7 @@ struct MainDashboardView: View {
                     alignment: .center
                 )
                 .padding()
+                .background(Color.renardMediumBlue)
                 
                 let rows = [
                     GridItem()
@@ -62,6 +63,7 @@ struct MainDashboardView: View {
                     .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
                     .frame(height: 35)
                 }
+                .background(Color.renardMediumBlue)
                 .padding(.vertical, -8)
                 
                 if viewModel.isLoading{
@@ -69,6 +71,8 @@ struct MainDashboardView: View {
                         .frame(height: 100.0)
                         .padding(.top, 22.0)
                     LoadingView(progress: $viewModel.convertionProgress, showLabel: true)
+                        .padding()
+                    
                     Color.renardBackgroundHeavy
                         .ignoresSafeArea()
                 }else{
@@ -97,6 +101,7 @@ struct MainDashboardView: View {
                     }
                 }
             }
+            .background(Color.renardBackgroundHeavy)
             .overlay{
                 VStack {
                     if viewModel.isOnSelection && viewModel.selectedAssetIDs.count > 0{
