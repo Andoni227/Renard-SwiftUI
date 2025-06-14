@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class AppCleaner{
     func clearTemporalDirectory() {
@@ -20,5 +21,23 @@ class AppCleaner{
         } catch {
             print("Error clearing temporary directory: \(error.localizedDescription)")
         }
+    }
+}
+
+class ImageCache {
+    static let shared = ImageCache()
+    private let cache = NSCache<NSString, UIImage>()
+
+    private init() {
+        cache.countLimit = 500
+        cache.totalCostLimit = 500 * 1024 * 1024
+    }
+
+    func image(for key: String) -> UIImage? {
+        cache.object(forKey: key as NSString)
+    }
+
+    func set(_ image: UIImage, for key: String) {
+        cache.setObject(image, forKey: key as NSString)
     }
 }

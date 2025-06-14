@@ -43,20 +43,31 @@ struct PhotoThumbnailView: View {
         .onAppear {
             loadThumbnail()
         }
+        .onDisappear {
+            self.image = nil
+        }
     }
     
     private func loadThumbnail() {
+        let identifier = asset.localIdentifier
+        
+        if let cachedImage = ImageCache.shared.image(for: identifier) {
+            self.image = cachedImage
+            return
+        }
+        
         let manager = PHCachingImageManager()
         let options = PHImageRequestOptions()
         options.isSynchronous = false
         options.deliveryMode = .opportunistic
         
-        let size = CGSize(width: 200, height: 230)
+        let size = CGSize(width: self.size, height: self.size)
         manager.requestImage(for: asset,
                              targetSize: size,
                              contentMode: .aspectFill,
                              options: options) { result, _ in
             if let result = result {
+                ImageCache.shared.set(result, for: identifier)
                 self.image = result
             }
         }
