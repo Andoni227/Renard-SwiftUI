@@ -85,14 +85,13 @@ struct MainDashboardView: View {
                         ScrollView(showsIndicators: true) {
                             LazyVGrid(columns: galleryColumns, spacing: 10) {
                                 ForEach(selectedPhotos, id: \.asset.localIdentifier) { assetObject in
-                                    PhotoThumbnailView(asset: assetObject.asset, size: itemWidth, isSelected: viewModel.selectedAssetIDs.contains(assetObject.asset.localIdentifier))
-                                        .onTapGesture {
-                                            if viewModel.isOnSelection {
-                                                viewModel.toggleSelection(of: assetObject.asset)
-                                            }else{
-                                                selectedAsset = assetObject
-                                            }
+                                    PhotoThumbnailView(asset: assetObject.asset, size: itemWidth, isSelected: viewModel.selectedAssetIDs.contains(assetObject.asset.localIdentifier), action: {
+                                        if viewModel.isOnSelection {
+                                            viewModel.toggleSelection(of: assetObject.asset)
+                                        }else{
+                                            selectedAsset = assetObject
                                         }
+                                    })
                                 }
                             }
                             .padding()
@@ -122,9 +121,9 @@ struct MainDashboardView: View {
             }
         }
         .sheet(item: $selectedAsset){ asset in
-                NavigationStack{
-                    PhotoPreview(asset: asset)
-                }
+            NavigationStack{
+                PhotoPreview(asset: asset)
+            }
         }
         .onAppear {
             viewModel.requestAuthorizationAndLoad()

@@ -11,29 +11,31 @@ struct PhotoThumbnailView: View {
     let asset: PHAsset
     let size: CGFloat
     let isSelected: Bool
+    let action: () -> Void
     
     @State private var image: UIImage? = nil
-
+    
     var body: some View {
         Group {
-            ZStack{
-                if let image = image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .opacity(isSelected ? 0.4 : 1)
-                } else {
-                    Color.gray.opacity(0.3)
+            Button(action: action, label: {
+                ZStack{
+                    if let image = image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .opacity(isSelected ? 0.4 : 1)
+                    } else {
+                        Color.gray.opacity(0.3)
+                    }
+                    
+                    if isSelected {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.white)
+                            .padding(4)
+                    }
                 }
-                
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 24))
-                        .foregroundColor(.white)
-                        .padding(4)
-                }
-            }
-            
+            })
         }
         .frame(width: size, height: size)
         .clipped()

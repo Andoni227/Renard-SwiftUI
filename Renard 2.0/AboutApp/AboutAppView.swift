@@ -131,6 +131,7 @@ struct AboutAppView: View {
         }) 
         .background(Color.renardDarkBlue.ignoresSafeArea())
         .navigationTitle("Renard")
+        .preferredColorScheme(.dark)
     }
 }
 
