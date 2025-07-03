@@ -11,6 +11,7 @@ import Charts
 struct GalleryStatistics: View {
     @EnvironmentObject var dashboardVM: MainDashboardViewModel
     @Environment(\.dismiss) var dismiss
+    @State private var selectedAsset: AssetObject? = nil
     
     var body: some View {
         let statsVM = StatisticsViewModel(photos: dashboardVM.photos)
@@ -32,7 +33,7 @@ struct GalleryStatistics: View {
                     .padding()
                     .frame(width: 350, height: 350)
                 }
-                RenardSectionList(sections: statsVM.getSections())
+                RenardSectionList(sections: statsVM.getSections(), selectedAsset: $selectedAsset)
                     .padding()
             }
         }
@@ -56,11 +57,10 @@ struct GalleryStatistics: View {
                     .foregroundColor(.white)
             }
         }
+        .sheet(item: $selectedAsset){ asset in
+            NavigationStack{
+                PhotoPreview(asset: asset)
+            }
+        }
     }
 }
-
-#Preview {
-    GalleryStatistics()
-        .environmentObject(MainDashboardViewModel())
-}
-

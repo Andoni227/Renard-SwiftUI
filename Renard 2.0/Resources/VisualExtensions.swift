@@ -60,26 +60,33 @@ struct RenardButton: View {
 
 struct RenardSectionList: View{
     var sections: RenardSectionElements
+    @Binding var selectedAsset: AssetObject?
     
     var body: some View {
         List{
             ForEach(sections) { section in
-                HStack{
-                    Text(LocalizedStringKey(section.title))
-                        .font(.custom("Montserrat-Bold", size: 16))
-                        .foregroundColor(.white)
-                        .font(.headline)
-                        .background(Color.renardDarkBlue)
-                    
-                    Spacer()
-                    
-                    ForEach(section.components, id: \String.self) { component in
-                        Text(LocalizedStringKey(component))
+                Button(action: {
+                    if let asset = section.selectedAsset{
+                        selectedAsset = asset
+                    }
+                }){
+                    HStack{
+                        Text(LocalizedStringKey(section.title))
+                            .font(.custom("Montserrat-Bold", size: 16))
                             .foregroundColor(.white)
-                            .font(.custom("Montserrat-Medium", size: 16))
-                            .multilineTextAlignment(.leading)
-                            .padding(.vertical, 8.0)
-                            .padding(.horizontal, 10)
+                            .font(.headline)
+                            .background(Color.renardDarkBlue)
+                        
+                        Spacer()
+                        
+                        ForEach(section.components, id: \String.self) { component in
+                            Text(LocalizedStringKey(component))
+                                .foregroundColor(.white)
+                                .font(.custom("Montserrat-Medium", size: 16))
+                                .multilineTextAlignment(.leading)
+                                .padding(.vertical, 8.0)
+                                .padding(.horizontal, 10)
+                        }
                     }
                 }
                 .listRowBackground(Color.renardDarkBlue)
@@ -96,6 +103,7 @@ struct RenardSectionElement: Identifiable{
     var id: UUID
     var title: String
     var components: [String]
+    var selectedAsset: AssetObject?
 }
 
 
