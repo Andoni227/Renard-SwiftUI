@@ -43,16 +43,15 @@ struct PhotoThumbnailView: View {
         .onAppear {
             loadThumbnail()
         }
-        .onDisappear {
-            self.image = nil
-        }
     }
     
     private func loadThumbnail() {
         let identifier = asset.localIdentifier
         
         if let cachedImage = ImageCache.shared.image(for: identifier) {
-            self.image = cachedImage
+            DispatchQueue.main.async {
+                self.image = cachedImage
+            }
             return
         }
         

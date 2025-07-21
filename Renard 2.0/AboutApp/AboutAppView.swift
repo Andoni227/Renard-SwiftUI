@@ -122,13 +122,8 @@ struct AboutAppView: View {
             }
         }
         .navigationDestination(for: Router.self, destination: { route in
-            switch route{
-            case .preferences:
-                AppSettings()
-            case .statistics:
-                GalleryStatistics()
-            }
-        }) 
+            route.view
+        })
         .background(Color.renardDarkBlue.ignoresSafeArea())
         .navigationTitle("Renard")
         .preferredColorScheme(.dark)

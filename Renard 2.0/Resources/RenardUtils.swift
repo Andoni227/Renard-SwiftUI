@@ -5,13 +5,28 @@
 //  Created by Andoni Suarez on 22/05/25.
 //
 import Photos
+import SwiftUI
 
 enum Router: Hashable{
+    static func == (lhs: Router, rhs: Router) -> Bool {
+        return lhs.hashValue == rhs.hashValue
+    }
+    
     case preferences
     case statistics
+    case photoInfo(asset: AssetObject)
+    
+    @ViewBuilder
+    var view: some View {
+        switch self{
+        case .preferences: AppSettings()
+        case .statistics: GalleryStatistics()
+        case .photoInfo(let asset): PhotoInfoView(asset: asset)
+        }
+    }
 }
 
-struct AssetObject: Identifiable{
+struct AssetObject: Identifiable, Hashable{
     var id: String { asset.localIdentifier }
     var asset: PHAsset
     var format: ImageType

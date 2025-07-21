@@ -75,7 +75,13 @@ struct PhotoPreview: View {
             ToolbarItem(placement: .principal) {
                 RNRDText(text: "Renard", size: 16)
             }
-            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(value: Router.photoInfo(asset: asset)) {
+                    Image(systemName:  "info.circle.fill")
+                        .imageScale(.large)
+                        .foregroundColor(.white)
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
                     dismiss()
@@ -86,6 +92,7 @@ struct PhotoPreview: View {
                 }
             }
         }
+        .navigationDestination(for: Router.self, destination: { router in router.view })
         .onAppear{
             viewModel.getImagePreview(asset: asset.asset)
         }

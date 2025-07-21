@@ -26,18 +26,13 @@ class AppCleaner{
 
 class ImageCache {
     static let shared = ImageCache()
-    private let cache = NSCache<NSString, UIImage>()
-
-    private init() {
-        cache.countLimit = 500
-        cache.totalCostLimit = 500 * 1024 * 1024
-    }
+    private var cache: [String: UIImage] = [:]
 
     func image(for key: String) -> UIImage? {
-        cache.object(forKey: key as NSString)
+        return cache[key]
     }
 
     func set(_ image: UIImage, for key: String) {
-        cache.setObject(image, forKey: key as NSString)
+        cache[key] = image
     }
 }
