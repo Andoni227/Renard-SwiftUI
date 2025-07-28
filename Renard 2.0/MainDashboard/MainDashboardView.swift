@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import Photos
 
 struct MainDashboardView: View {
     @StateObject private var viewModel = MainDashboardViewModel()
     @State private var showFAQ = false
     @State private var selectedAsset: AssetObject? = nil
     
+    let imageManager = PHImageManager.default()
+    let options = PHImageRequestOptions()
     var galleryColumns: [GridItem] {
         let count = getElementsInScreen(for: 120.0)
         return Array(repeating: GridItem(.flexible(), spacing: 10), count: count)
@@ -77,27 +80,23 @@ struct MainDashboardView: View {
                         .ignoresSafeArea()
                 }else{
                     let selectedPhotos = viewModel.photos.filter { $0.format == viewModel.selectedFormat }
-                    GeometryReader { geo in
-                        let gridCount = getElementsInScreen(for: 120.0)
-                        let totalSpacing = CGFloat((gridCount - 1) * 10)
-                        let itemWidth = (geo.size.width - totalSpacing - 20) / CGFloat(gridCount)
-                        
                         ScrollView(showsIndicators: true) {
                             LazyVGrid(columns: galleryColumns, spacing: 10) {
                                 ForEach(selectedPhotos, id: \.asset.localIdentifier) { assetObject in
-                                    PhotoThumbnailView(asset: assetObject.asset, size: itemWidth, isSelected: viewModel.selectedAssetIDs.contains(assetObject.asset.localIdentifier), action: {
+                                    PhotoThumbnailView(asset: assetObject.asset, size: viewModel.imagesSize, isSelected: viewModel.selectedAssetIDs.contains(assetObject.asset.localIdentifier), imageManager: self.imageManager, managerOptions: self.options, action: {
                                         if viewModel.isOnSelection {
                                             viewModel.toggleSelection(of: assetObject.asset)
                                         }else{
                                             selectedAsset = assetObject
                                         }
                                     })
+                                    .id(assetObject.asset.localIdentifier)  
+                                    .contentShape(Rectangle())
                                 }
                             }
                             .padding()
                         }
                         .background(Color.renardBackgroundHeavy)
-                    }
                 }
             }
             .background(Color.renardBackgroundHeavy)

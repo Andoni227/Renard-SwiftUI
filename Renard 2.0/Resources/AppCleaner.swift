@@ -23,16 +23,3 @@ class AppCleaner{
         }
     }
 }
-
-class ImageCache {
-    static let shared = ImageCache()
-    private var cache: [String: UIImage] = [:]
-
-    func image(for key: String) -> UIImage? {
-        return cache[key]
-    }
-
-    func set(_ image: UIImage, for key: String) {
-        cache[key] = image
-    }
-}

@@ -11,6 +11,8 @@ struct PhotoThumbnailView: View {
     let asset: PHAsset
     let size: CGFloat
     let isSelected: Bool
+    let imageManager: PHImageManager
+    let managerOptions: PHImageRequestOptions
     let action: () -> Void
     
     @State private var image: UIImage? = nil
@@ -46,28 +48,16 @@ struct PhotoThumbnailView: View {
     }
     
     private func loadThumbnail() {
-        let identifier = asset.localIdentifier
-        
-        if let cachedImage = ImageCache.shared.image(for: identifier) {
-            DispatchQueue.main.async {
-                self.image = cachedImage
-            }
-            return
-        }
-        
-        let manager = PHCachingImageManager()
-        let options = PHImageRequestOptions()
-        options.isSynchronous = false
-        options.deliveryMode = .opportunistic
-        
-        let size = CGSize(width: self.size, height: self.size)
-        manager.requestImage(for: asset,
-                             targetSize: size,
-                             contentMode: .aspectFill,
-                             options: options) { result, _ in
-            if let result = result {
-                ImageCache.shared.set(result, for: identifier)
-                self.image = result
+        Task { @MainActor in
+            let size = CGSize(width: self.size, height: self.size)
+            managerOptions.isSynchronous = false
+            managerOptions.deliveryMode = .opportunistic
+            imageManager.requestImage(for: asset, targetSize: size, contentMode: .aspectFill, options: managerOptions) { (image, _) in
+                
+                if let result = image {
+                    self.image = result
+                }
+                
             }
         }
     }

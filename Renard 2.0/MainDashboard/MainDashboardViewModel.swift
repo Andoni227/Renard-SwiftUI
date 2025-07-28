@@ -27,16 +27,29 @@ class MainDashboardViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var convertionProgress: Double = 0.0
     @Published var processComplete: Bool = false
+    @Published var imagesSize: Double = 0.0
     
     private var photosMap: [String: AssetObject] = [:]
     
     init() { }
+    
+    func setSize() {
+        func getElementsInScreen(for size: CGFloat) -> Int{
+            return Int(UIScreen.main.bounds.width / size)
+        }
+        
+        let screenWidth = UIScreen.main.bounds.width
+        let gridCount = getElementsInScreen(for: 120.0)
+        let totalSpacing = CGFloat((gridCount - 1) * 10)
+        imagesSize = (screenWidth - totalSpacing - 20) / CGFloat(gridCount)
+    }
     
     func clearSelection() {
         selectedAssetIDs.removeAll()
     }
     
     func requestAuthorizationAndLoad() {
+        setSize()
         guard photos.isEmpty else { return }
         PHPhotoLibrary.requestAuthorization { status in
             DispatchQueue.main.async {
