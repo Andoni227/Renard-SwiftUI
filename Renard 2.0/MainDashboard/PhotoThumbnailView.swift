@@ -48,16 +48,12 @@ struct PhotoThumbnailView: View {
     }
     
     private func loadThumbnail() {
-        Task { @MainActor in
-            let size = CGSize(width: self.size, height: self.size)
-            managerOptions.isSynchronous = false
-            managerOptions.deliveryMode = .opportunistic
-            imageManager.requestImage(for: asset, targetSize: size, contentMode: .aspectFill, options: managerOptions) { (image, _) in
-                
-                if let result = image {
-                    self.image = result
-                }
-                
+        let size = CGSize(width: 200.0, height: 200.0)
+        managerOptions.isSynchronous = false
+        managerOptions.deliveryMode = .opportunistic
+        imageManager.requestImage(for: asset, targetSize: size, contentMode: .aspectFill, options: managerOptions) { (image, _) in
+            if let result = image {
+                self.image = result
             }
         }
     }

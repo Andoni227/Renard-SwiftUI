@@ -7,12 +7,14 @@
 
 import SwiftUI
 import Photos
+import PhotosUI
 
 struct MainDashboardView: View {
     @StateObject private var viewModel = MainDashboardViewModel()
     @State private var showFAQ = false
     @State private var selectedAsset: AssetObject? = nil
-    
+    @State private var photosFromPicker: [PhotosPickerItem] = []
+    @State private var openPicker = false
     let imageManager = PHImageManager.default()
     let options = PHImageRequestOptions()
     var galleryColumns: [GridItem] {
@@ -35,6 +37,24 @@ struct MainDashboardView: View {
                             .tint(.white)
                     }
                     .buttonStyle(.automatic)
+                    Button(action: {
+                        viewModel.isOnSelection = false
+                        viewModel.clearSelection()
+                        openPicker = true
+                    }) {
+                        Image(systemName: "photo.badge.magnifyingglass")
+                            .renderingMode(.template)
+                            .imageScale(.large)
+                            .tint(.white)
+                    }
+                    .photosPicker(isPresented: $openPicker, selection: $photosFromPicker, matching: .images)
+                    .onChange(of: photosFromPicker) { newItems in
+                        Task {
+                            await viewModel.convertFromPicker(photosFromPicker)
+                        }
+                    }
+                    .buttonStyle(.automatic)
+                    .padding()
                     Spacer()
                     Button(viewModel.isOnSelection ? "cancel" : "selectTxt") {
                         withAnimation{
@@ -79,24 +99,29 @@ struct MainDashboardView: View {
                     Color.renardBackgroundHeavy
                         .ignoresSafeArea()
                 }else{
-                    let selectedPhotos = viewModel.photos.filter { $0.format == viewModel.selectedFormat }
-                        ScrollView(showsIndicators: true) {
-                            LazyVGrid(columns: galleryColumns, spacing: 10) {
-                                ForEach(selectedPhotos, id: \.asset.localIdentifier) { assetObject in
-                                    PhotoThumbnailView(asset: assetObject.asset, size: viewModel.imagesSize, isSelected: viewModel.selectedAssetIDs.contains(assetObject.asset.localIdentifier), imageManager: self.imageManager, managerOptions: self.options, action: {
-                                        if viewModel.isOnSelection {
-                                            viewModel.toggleSelection(of: assetObject.asset)
-                                        }else{
-                                            selectedAsset = assetObject
+                    ScrollView(showsIndicators: true) {
+                        LazyVGrid(columns: galleryColumns, spacing: 10) {
+                            ForEach(viewModel.getPhotosForFormat(), id: \.asset.localIdentifier) { assetObject in
+                                PhotoThumbnailView(asset: assetObject.asset, size: viewModel.imagesSize, isSelected: viewModel.selectedAssetIDs.contains(assetObject.asset.localIdentifier), imageManager: self.imageManager, managerOptions: self.options, action: {
+                                    if viewModel.isOnSelection {
+                                        viewModel.toggleSelection(of: assetObject.asset)
+                                    }else{
+                                        selectedAsset = assetObject
+                                    }
+                                })
+                                .simultaneousGesture(
+                                    LongPressGesture(minimumDuration: 0.3)
+                                        .onEnded { _ in
+                                            viewModel.isOnSelection = true
                                         }
-                                    })
-                                    .id(assetObject.asset.localIdentifier)  
-                                    .contentShape(Rectangle())
-                                }
+                                )
+                                .id(assetObject.asset.localIdentifier)
+                                .contentShape(Rectangle())
                             }
-                            .padding()
                         }
-                        .background(Color.renardBackgroundHeavy)
+                        .padding()
+                    }
+                    .background(Color.renardBackgroundHeavy)
                 }
             }
             .background(Color.renardBackgroundHeavy)

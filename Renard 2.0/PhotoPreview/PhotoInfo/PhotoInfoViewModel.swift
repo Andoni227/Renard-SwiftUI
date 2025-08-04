@@ -12,6 +12,7 @@ class PhotoInfoViewModel: ObservableObject{
     @Published var jsonMetadata: JSON?
     @Published var fileName: String?
     @Published var camera: String?
+    @Published var location: String?
     
     func getAssetMetadata(asset: PHAsset) {
         let options = PHContentEditingInputRequestOptions()
@@ -48,25 +49,3 @@ class PhotoInfoViewModel: ObservableObject{
     }
 }
 
-
-
-@dynamicMemberLookup
-struct JSON {
-    let data: [String: Any]
-    
-    subscript<T>(dynamicMember member: String) -> T? {
-        let key: String
-        if member == "TIFF" || member == "GPS" || member == "Exif" || member == "MakerApple" || member == "ExifAux"{
-          key = "{\(member)}"
-        }else{
-            key = member
-        }
-        
-        let value = data[key]
-        if let nestedDict = value as? [String: Any]{
-            return JSON(data: nestedDict) as? T
-        }else{
-            return value as? T
-        }
-    }
-}

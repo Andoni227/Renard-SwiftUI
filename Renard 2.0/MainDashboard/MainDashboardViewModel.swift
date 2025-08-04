@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Photos
+import PhotosUI
 
 class MainDashboardViewModel: ObservableObject {
     @Published var photos: [AssetObject] = []
@@ -90,7 +91,7 @@ class MainDashboardViewModel: ObservableObject {
         finishProcess()
     }
     
-    func finishProcess(){
+    func finishProcess() {
         DispatchQueue.main.async { [self] in
             isLoading = false
             isOnSelection = false
@@ -129,6 +130,23 @@ class MainDashboardViewModel: ObservableObject {
             self.availableFormats = formatsCount.sorted(by: { $0.count > $1.count })
             self.selectedFormat = self.availableFormats.first?.imageType ?? nil
         }
+    }
+    
+    @MainActor
+    func getPhotosForFormat() -> [AssetObject] {
+        let photosForFormat = photos.filter { $0.format == selectedFormat }
+        return Array(photosForFormat.prefix(400))
+    }
+    
+    @MainActor
+    func convertFromPicker(_ photos: [PhotosPickerItem]) async {
+        self.selectedAssetIDs.removeAll()
+        for item in photos{
+            if let imgId = item.itemIdentifier{
+                self.selectedAssetIDs.insert(imgId)
+            }
+        }
+        await startConvertion()
     }
     
     private func setImageSize() {
