@@ -1528,6 +1528,47 @@
         }
       }
     },
+    "limitedAccessWarning" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unconverted photos were detected. This may be due to incomplete permissions granted to one or more selected images."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se detectaron fotos sin convertir. Esto puede deberse a que no se concedieron permisos completos a una o varias imágenes seleccionadas."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se detectaron fotos sin convertir, esto puede deberse a que no se otorgaron permisos completos a una o varias imágenes seleccionadas"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "변환되지 않은 사진이 감지되었습니다. 이는 선택한 하나 이상의 이미지에 전체 권한이 부여되지 않았기 때문일 수 있습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foram detectadas fotos não convertidas. Isso pode ter ocorrido porque uma ou mais imagens selecionadas não receberam permissões completas."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foram detetadas fotos não convertidas. Isto pode dever-se à falta de permissões completas para uma ou mais imagens selecionadas."
+          }
+        }
+      }
+    },
     "limitSelectedImages" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2214,6 +2255,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Renard"
+          }
+        }
+      }
+    },
+    "requestPermission" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Required Permissions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permisos requeridos"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permisos requeridos"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " 필요한 권한"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permissões requeridas"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permissões necessárias"
           }
         }
       }

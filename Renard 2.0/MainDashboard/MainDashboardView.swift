@@ -15,6 +15,7 @@ struct MainDashboardView: View {
     @State private var selectedAsset: AssetObject? = nil
     @State private var photosFromPicker: [PhotosPickerItem] = []
     @State private var openPicker = false
+    @Environment(\.scenePhase) private var scenePhase
     let imageManager = PHImageManager.default()
     let options = PHImageRequestOptions()
     var galleryColumns: [GridItem] {
@@ -47,10 +48,10 @@ struct MainDashboardView: View {
                             .imageScale(.large)
                             .tint(.white)
                     }
-                    .photosPicker(isPresented: $openPicker, selection: $photosFromPicker, matching: .images)
+                    .photosPicker(isPresented: $openPicker, selection: $photosFromPicker, matching: .images, photoLibrary: .shared())
                     .onChange(of: photosFromPicker) { newItems in
                         Task {
-                            await viewModel.convertFromPicker(photosFromPicker)
+                            await viewModel.convertFromPicker(newItems)
                         }
                     }
                     .buttonStyle(.automatic)
@@ -158,6 +159,32 @@ struct MainDashboardView: View {
                 viewModel.clearSelection()
                 viewModel.loadPhotos()
             })
+        }
+        .alert("cameraPermission", isPresented: $viewModel.needsPemission) {
+            Button("accept", role: .cancel, action: {
+                viewModel.openSettings()
+            })
+        }
+        .alert("requestPermission", isPresented: $viewModel.limitedAccess) {
+            Button("openSettings", role: .cancel) {
+                viewModel.clearSelection()
+                viewModel.loadPhotos()
+                viewModel.openSettings()
+            }
+            Button("accept", role: .destructive) {
+                viewModel.clearSelection()
+                viewModel.loadPhotos()
+                viewModel.limitedAccess = false
+            }
+        } message: {
+            Text("limitedAccessWarning")
+        }
+        .onChange(of: scenePhase) { scene in
+            switch scene{
+             case .active: viewModel.requestAuthorizationAndLoad()
+             case .background, .inactive: break
+             @unknown default: break
+            }
         }
     }
 }

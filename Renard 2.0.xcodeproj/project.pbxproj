@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F07814CC2E42699B00F296B0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F07814CB2E42699B00F296B0 /* PrivacyInfo.xcprivacy */; };
 		F0A133402DF220C400B51800 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = F0A1333F2DF220C400B51800 /* Lottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		F0239D752DDE898E00AA394F /* Renard 2.0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Renard 2.0.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F07814CB2E42699B00F296B0 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -37,6 +39,7 @@
 		F0239D6C2DDE898E00AA394F = {
 			isa = PBXGroup;
 			children = (
+				F07814CB2E42699B00F296B0 /* PrivacyInfo.xcprivacy */,
 				F0239D772DDE898E00AA394F /* Renard 2.0 */,
 				F0239D762DDE898E00AA394F /* Products */,
 			);
@@ -119,6 +122,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F07814CC2E42699B00F296B0 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -29,7 +29,10 @@ class MainDashboardViewModel: ObservableObject {
     @Published var convertionProgress: Double = 0.0
     @Published var processComplete: Bool = false
     @Published var imagesSize: Double = 0.0
+    @Published var needsPemission: Bool = false
+    @Published var limitedAccess: Bool = false
     
+    var emptyElements: Bool = false
     private var photosMap: [String: AssetObject] = [:]
     
     init() { }
@@ -54,7 +57,10 @@ class MainDashboardViewModel: ObservableObject {
         guard photos.isEmpty else { return }
         PHPhotoLibrary.requestAuthorization { status in
             DispatchQueue.main.async {
-                guard status == .authorized || status == .limited else { return }
+                guard status == .authorized || status == .limited else {
+                    self.needsPemission = true
+                    return
+                }
                 self.loadPhotos()
             }
         }
@@ -69,26 +75,11 @@ class MainDashboardViewModel: ObservableObject {
         }
     }
     
-    @MainActor
-    func startConvertion() async {
-        self.isLoading = true
-        
-        var selectedAssets: [PHAsset] = []
-        
-        for id in selectedAssetIDs{
-            if let asset = self.photosMap[id]?.asset{
-                selectedAssets.append(asset)
-            }
+    func openSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString),
+           UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
         }
-        
-        let results = await ImageConverter().convertAndSaveAssetsAsHEIF(from: selectedAssets, progressHandler: { progress in
-            self.convertionProgress = progress
-        })
-        
-        print("SUCCESS \(results.filter({ $0.0 == true }).count) ERRORS \(results.filter({ $0.0 == false }).count)")
-        print("ERRORES: \(results.map({ $0.1 }))")
-        
-        finishProcess()
     }
     
     func finishProcess() {
@@ -98,12 +89,20 @@ class MainDashboardViewModel: ObservableObject {
             if deleteAfterSave{
                 self.deleteAsset(identifiers: Array(selectedAssetIDs), completion: { success, error in
                     DispatchQueue.main.async {
-                        self.processComplete = true
+                        self.showAlert()
                     }
                 })
             }else{
-                processComplete = true
+                showAlert()
             }
+        }
+    }
+    
+    func showAlert() {
+        if self.emptyElements {
+            self.limitedAccess = true
+        } else {
+            self.processComplete = true
         }
     }
     
@@ -130,6 +129,30 @@ class MainDashboardViewModel: ObservableObject {
             self.availableFormats = formatsCount.sorted(by: { $0.count > $1.count })
             self.selectedFormat = self.availableFormats.first?.imageType ?? nil
         }
+    }
+    
+    @MainActor
+    func startConvertion() async {
+        self.isLoading = true
+        
+        var selectedAssets: [PHAsset] = []
+        
+        for id in selectedAssetIDs{
+            if let asset = self.photosMap[id]?.asset{
+                selectedAssets.append(asset)
+            }else{
+                emptyElements = true
+            }
+        }
+        
+        let results = await ImageConverter().convertAndSaveAssetsAsHEIF(from: selectedAssets, progressHandler: { progress in
+            self.convertionProgress = progress
+        })
+        
+        print("SUCCESS \(results.filter({ $0.0 == true }).count) ERRORS \(results.filter({ $0.0 == false }).count)")
+        print("ERRORES: \(results.map({ $0.1 }))")
+        
+        finishProcess()
     }
     
     @MainActor
