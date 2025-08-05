@@ -26,6 +26,7 @@ class PhotoPreviewViewModel: ObservableObject{
     }
     
     func getImagePreview(asset: PHAsset){
+        guard imgPreview == nil else { return }
         let manager = PHCachingImageManager()
         let options = PHImageRequestOptions()
         options.isSynchronous = false
@@ -71,7 +72,7 @@ class PhotoPreviewViewModel: ObservableObject{
             })
         }
     }
-     
+    
     private func finishConvertion(){
         DispatchQueue.main.async {
             self.isLoading = false
