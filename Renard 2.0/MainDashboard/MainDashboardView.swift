@@ -52,6 +52,7 @@ struct MainDashboardView: View {
                     .onChange(of: photosFromPicker) { newItems in
                         Task {
                             await viewModel.convertFromPicker(newItems)
+                            photosFromPicker = []
                         }
                     }
                     .buttonStyle(.automatic)
