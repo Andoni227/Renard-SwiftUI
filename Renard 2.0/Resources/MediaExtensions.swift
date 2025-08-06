@@ -20,12 +20,10 @@ extension PHAsset{
     
     func getType() -> ImageType{
         guard self.mediaType == .image else {
-            print("El PHAsset no es un archivo de imagen")
             return .NOTIMAGE
         }
         
         guard let uniformType = self.value(forKey: "uniformTypeIdentifier") as? String else {
-            print("No se pudo obtener el uniformTypeIdentifier del PHAsset")
             return .UNOWNED
         }
         
