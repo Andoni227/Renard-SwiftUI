@@ -11,24 +11,24 @@ import Photos
 struct PhotoInfoView: View {
     @StateObject private var viewModel = PhotoInfoViewModel()
     let asset: AssetObject
-
+    
     var body: some View {
-        
-        HStack{
-            VStack(alignment: .leading){
-                RNRDText(text: "Title", size: 30.0)
-                    .padding(.bottom, 10.0)
-                RNRDText(text: "\(viewModel.fileName ?? "Unknown")")
-                    .padding(.bottom, 10.0)
-                RNRDText(text: "Camera", size: 30.0)
-                    .padding(.bottom, 10.0)
-                RNRDText(text: "\(viewModel.camera ?? "Unknown")")
-                Spacer()
-            }
-            .padding(.horizontal, 10.0)
-            Spacer()
+        List {
+            ForEach(viewModel.imageData, content: { section in
+                Section {
+                    ForEach(section.elements, id: \.self) { text in
+                        RNRDText(text: LocalizedStringKey(text), size: 15.0)
+                            .listRowBackground(Color.renardMediumBlue)
+                    }
+                } header: {
+                    RNRDText(text: section.titleSection, size: 15.0)
+                } footer: {
+                    RNRDText(text: section.titleFooter ?? "", size: 15.0)
+                }
+            })
         }
-        
+        .scrollContentBackground(.hidden)
+        .listStyle(.automatic)
         .background(Color.renardDarkBlue.ignoresSafeArea())
         .toolbarBackground(Color.renardMediumBlue, for: .navigationBar)
         .toolbarColorScheme(.light, for: .navigationBar)

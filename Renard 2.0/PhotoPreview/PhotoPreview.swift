@@ -35,7 +35,7 @@ struct PhotoPreview: View {
             VStack(spacing: 0.0){
                 Spacer()
                 HStack{
-                    RNRDText(text: "deleteAfterSave")
+                    RNRDText(text: "delete_after_save")
                         .background(Color.renardDarkBlue)
                         .padding(.vertical, 15.0)
                     Toggle("", isOn: $viewModel.shouldDeleteAfterSave)

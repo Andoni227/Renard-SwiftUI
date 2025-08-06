@@ -38,3 +38,17 @@ struct JSON {
         }
     }
 }
+
+@propertyWrapper
+struct Capitalized {
+    private var value: [String]
+
+    var wrappedValue: [String] {
+        get { value }
+        set { value = newValue.map({ $0.capitalized })}
+    }
+
+    init(wrappedValue: [String]) {
+        self.value = wrappedValue.map({ $0.capitalized })
+    }
+}

@@ -69,6 +69,46 @@
         }
       }
     },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
     "%@ %lld" : {
       "localizations" : {
         "en" : {
@@ -184,48 +224,8 @@
         }
       }
     },
-    "attention" : {
+    "camera" : {
       "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Attention"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atención"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atención"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "주의"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atenção"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atenção"
-          }
-        }
-      }
-    },
-    "Camera" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -265,7 +265,7 @@
         }
       }
     },
-    "cameraName" : {
+    "camera_name" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -306,7 +306,7 @@
         }
       }
     },
-    "cameraPermission" : {
+    "camera_permission" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -422,48 +422,7 @@
         }
       }
     },
-    "CountbyFormat" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Count by Format"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conteo por formato"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conteo por formato"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "형식별 개수"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Contagem por Formato"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Contagem por Formato"
-          }
-        }
-      }
-    },
-    "deleteAfterSave" : {
+    "delete_after_save" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -504,47 +463,7 @@
         }
       }
     },
-    "deleteAfterSave %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete original images after saving (%@)"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar imágenes originales después de guardar (%@)"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar imágenes originales después de guardar (%@)"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "저장 후 원본 이미지 삭제 (%@)"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Excluir imagens originais após salvar (%@)"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar imagens originais após guardar (%@)"
-          }
-        }
-      }
-    },
-    "deleteAfterSaveOne" : {
+    "delete_after_save_one" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -581,6 +500,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Eliminar imagem original após guardar"
+          }
+        }
+      }
+    },
+    "deleteAfterSave %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete original images after saving (%@)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar imágenes originales después de guardar (%@)"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar imágenes originales después de guardar (%@)"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장 후 원본 이미지 삭제 (%@)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluir imagens originais após salvar (%@)"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar imagens originais após guardar (%@)"
           }
         }
       }
@@ -2697,46 +2656,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estatísticas da galeria"
-          }
-        }
-      }
-    },
-    "Title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "File Name"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nombre del archivo"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nombre del archivo"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "파일 이름"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nome do arquivo"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nome do arquivo"
           }
         }
       }

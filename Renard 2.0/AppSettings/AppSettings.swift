@@ -17,7 +17,7 @@ struct AppSettings: View {
             Color.renardBackgroundHeavy.ignoresSafeArea()
             VStack(alignment: .leading){
                 HStack{
-                    Text(LocalizedStringKey("deleteAfterSaveOne"))
+                    Text(LocalizedStringKey("delete_after_save_one"))
                         .font(.custom("Montserrat-Medium", size: 16))
                         .foregroundColor(.white)
                         .padding()

@@ -161,7 +161,7 @@ struct MainDashboardView: View {
                 viewModel.loadPhotos()
             })
         }
-        .alert("cameraPermission", isPresented: $viewModel.needsPemission) {
+        .alert("camera_permission", isPresented: $viewModel.needsPemission) {
             Button("accept", role: .cancel, action: {
                 viewModel.openSettings()
             })

@@ -7,12 +7,12 @@
 
 import Combine
 import Photos
+import SwiftUICore
 
 class PhotoInfoViewModel: ObservableObject{
     @Published var jsonMetadata: JSON?
     @Published var fileName: String?
-    @Published var camera: String?
-    @Published var location: String?
+    @Published var imageData: PhotosViewData = []
     
     func getAssetMetadata(asset: PHAsset) {
         let options = PHContentEditingInputRequestOptions()
@@ -30,7 +30,7 @@ class PhotoInfoViewModel: ObservableObject{
                     let metadata = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [String: Any]
                     if let jsonData = metadata{
                         self.jsonMetadata = JSON(data: jsonData)
-                        setData()
+                        self.setImageData()
                     }
                     return
                 }
@@ -38,14 +38,69 @@ class PhotoInfoViewModel: ObservableObject{
         }
     }
     
-    func setData() {
+    private func getCameraInfo(_ data: JSON) -> [String] {
+        var cameraInfo: [String] = []
+        let maker: String? = data.Make
+        let model: String? = data.Model
+        let software: String? = data.Software
+        let dateTime: String? = data.DateTime
+        
+        if let model = model,  let maker = maker {
+            if model.contains(maker){
+                cameraInfo.append(model)
+            }else{
+                cameraInfo.append("\(maker) \(model)")
+            }
+        }
+        
+        if let swrtVersion = software{
+            if model?.contains("iPhone") ?? false {
+                cameraInfo.append("Software: iOS \(swrtVersion)")
+            }else{
+                cameraInfo.append("Software: \(swrtVersion)")
+            }
+        }
+        
+        if let date = dateTime{
+            let inputFormatter = DateFormatter()
+            inputFormatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
+            inputFormatter.locale = Locale(identifier: "en_US_POSIX")
+            
+            if let date = inputFormatter.date(from: date) {
+                let outputFormatter = DateFormatter()
+                outputFormatter.dateFormat = "MMMM dd yyyy, hh:mm a"
+                outputFormatter.locale = Locale.current
+                
+                cameraInfo.append(outputFormatter.string(from: date).capitalized)
+            }
+        }
+        
+        
+        return cameraInfo
+    }
+    
+    func setImageData() {
         let tiff: JSON? = jsonMetadata?.TIFF
-        let makerApple: JSON? = jsonMetadata?.MakerApple
         let GPS: JSON? = jsonMetadata?.GPS
         let exifAux: JSON? = jsonMetadata?.ExifAux
         let exif: JSON? = jsonMetadata?.Exif
         
-        self.camera = tiff?.Model
+        if let tiffInfo = tiff{
+            var cameraInfoSection = PhotoViewData(titleSection: "camera")
+            cameraInfoSection.elements = getCameraInfo(tiffInfo)
+            imageData.append(cameraInfoSection)
+        }
     }
 }
 
+typealias PhotosViewData = [PhotoViewData]
+struct PhotoViewData: Identifiable {
+    var id = UUID()
+    var titleSection: LocalizedStringKey
+    var titleFooter: LocalizedStringKey? = nil
+    var elements: [String] = []
+    
+    init(titleSection: LocalizedStringKey) {
+        self.titleSection = titleSection
+    }
+}
