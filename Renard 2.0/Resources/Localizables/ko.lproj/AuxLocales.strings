@@ -1,0 +1,7 @@
+artist = "아티스트";
+latitude = "위도";
+longitude = "경도";
+altitude = "고도";
+timestamp = "타임스탬프";
+speed = "속도";
+speed_knot = "노트";

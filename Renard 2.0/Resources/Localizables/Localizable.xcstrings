@@ -224,6 +224,9 @@
         }
       }
     },
+    "artist" : {
+
+    },
     "camera" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -666,6 +669,9 @@
           }
         }
       }
+    },
+    "GPS" : {
+
     },
     "imagesAlreadyHEIF" : {
       "extractionState" : "manual",
@@ -2659,6 +2665,9 @@
           }
         }
       }
+    },
+    "TIFF" : {
+
     },
     "TotalPhotos" : {
       "extractionState" : "manual",

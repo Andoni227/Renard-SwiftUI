@@ -1,0 +1,7 @@
+artist = "Artista";
+latitude = "Latitud";
+longitude = "Longitud";
+altitude = "Altitud";
+timestamp = "Marca de tiempo";
+speed = "Velocidad";
+speed_knot = "Nudos";

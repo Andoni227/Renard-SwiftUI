@@ -78,7 +78,7 @@ class PhotoInfoViewModel: ObservableObject{
         }
         
         if let artist = artist{
-            cameraInfo.append("\(NSLocalizedString("artist", comment: "")): \(artist)")
+            cameraInfo.append("\(NSLocalizedString("artist", tableName: "AuxLocales", comment: "")): \(artist)")
         }
         
         if let rights = copyright{
@@ -90,6 +90,36 @@ class PhotoInfoViewModel: ObservableObject{
     
     private func getGPSData(_ data: JSON) -> [String] {
         var gpsInfo: [String] = []
+        let latitude: Double? = data.Latitude
+        let longitude: Double? = data.Longitude
+        let altitude: Double? = data.Altitude
+        let speed: Double? = data.Speed
+        let speedRef: String? = data.SpeedRef
+        
+        if let imgLatitude = latitude{
+            gpsInfo.append("\(NSLocalizedString("latitude", tableName: "AuxLocales", comment: "")): \(imgLatitude)")
+        }
+        
+        if let imgLongitude = longitude{
+            gpsInfo.append("\(NSLocalizedString("longitude", tableName: "AuxLocales", comment: "")): \(imgLongitude)")
+        }
+        
+        if let imgAltitude = altitude{
+            gpsInfo.append("\(NSLocalizedString("altitude", tableName: "AuxLocales", comment: "")): \(imgAltitude.rounded())")
+        }
+        
+        if let imgSpeed = speed, let imgSpeedUnit = speedRef{
+            let photoSpeed = "\(NSLocalizedString("speed", tableName: "AuxLocales", comment: "")): \(imgSpeed.rounded())"
+            var photoSpeedUnit = imgSpeedUnit
+            switch imgSpeedUnit {
+              case "K": photoSpeedUnit = "km/h"
+              case "M": photoSpeedUnit = "mph"
+              case "N": photoSpeedUnit = NSLocalizedString("speed_knot", tableName: "AuxLocales", comment: "")
+              default: ()
+            }
+            
+            gpsInfo.append("\(photoSpeed) \(photoSpeedUnit)")
+        }
         
         return gpsInfo
     }
