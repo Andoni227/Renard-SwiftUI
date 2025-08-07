@@ -5,3 +5,5 @@ altitude = "Altitud";
 timestamp = "TimeStamp";
 speed = "Speed";
 speed_knot = "Knots";
+gps_active = "Active measurement: valid position acquired";
+gps_void = "Invalid GPS measurement / Not available";

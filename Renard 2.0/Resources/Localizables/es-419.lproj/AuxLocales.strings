@@ -5,3 +5,5 @@ altitude = "Altitud";
 timestamp = "Marca de tiempo";
 speed = "Velocidad";
 speed_knot = "Nudos";
+gps_active = "Medición activa: posición válida obtenida";
+gps_void = "Medición de GPS inválida / No disponible";

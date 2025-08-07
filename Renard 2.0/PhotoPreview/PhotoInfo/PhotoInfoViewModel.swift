@@ -15,6 +15,7 @@ class PhotoInfoViewModel: ObservableObject{
     @Published var imageData: PhotosViewData = []
     
     func getAssetMetadata(asset: PHAsset) {
+        imageData = []
         let options = PHContentEditingInputRequestOptions()
         options.isNetworkAccessAllowed = true
         
@@ -95,6 +96,7 @@ class PhotoInfoViewModel: ObservableObject{
         let altitude: Double? = data.Altitude
         let speed: Double? = data.Speed
         let speedRef: String? = data.SpeedRef
+        let gpsStatus: String? = data.Status
         
         if let imgLatitude = latitude{
             gpsInfo.append("\(NSLocalizedString("latitude", tableName: "AuxLocales", comment: "")): \(imgLatitude)")
@@ -119,6 +121,16 @@ class PhotoInfoViewModel: ObservableObject{
             }
             
             gpsInfo.append("\(photoSpeed) \(photoSpeedUnit)")
+        }
+        
+        if let imgGPSStatus = gpsStatus{
+            var GPSStatus = ""
+            switch imgGPSStatus{
+               case "A": GPSStatus = NSLocalizedString("gps_active", tableName: "AuxLocales", comment: "")
+               case "V": GPSStatus = NSLocalizedString("gps_void", tableName: "AuxLocales", comment: "")
+               default: GPSStatus = imgGPSStatus
+            }
+            gpsInfo.append(GPSStatus)
         }
         
         return gpsInfo

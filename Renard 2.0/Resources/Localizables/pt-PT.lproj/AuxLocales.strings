@@ -5,3 +5,5 @@ altitude = "Altitude";
 timestamp = "Carimbo de data/hora";
 speed = "Velocidade";
 speed_knot = "nós";
+gps_active = "Medição ativa: posição válida obtida";
+gps_void = "Medição GPS inválida / Não disponível";

@@ -5,3 +5,5 @@ altitude = "고도";
 timestamp = "타임스탬프";
 speed = "속도";
 speed_knot = "노트";
+gps_active = "활성 측정: 유효한 위치 획득됨";
+gps_void = "GPS 측정이 유효하지 않음 / 사용 불가";
