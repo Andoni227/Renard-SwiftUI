@@ -39,6 +39,22 @@ class PhotoInfoViewModel: ObservableObject{
         }
     }
     
+    private func dateConvertion(_ date: String) -> String?{
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
+        inputFormatter.locale = Locale(identifier: "en_US_POSIX")
+        
+        if let date = inputFormatter.date(from: date) {
+            let outputFormatter = DateFormatter()
+            outputFormatter.dateFormat = "MMMM dd yyyy, hh:mm:ss a"
+            outputFormatter.locale = Locale.current
+            
+            return outputFormatter.string(from: date).capitalized
+        }else {
+            return nil
+        }
+    }
+    
     private func getCameraInfo(_ data: JSON) -> [String] {
         var cameraInfo: [String] = []
         let maker: String? = data.Make
@@ -64,18 +80,8 @@ class PhotoInfoViewModel: ObservableObject{
             }
         }
         
-        if let date = dateTime{
-            let inputFormatter = DateFormatter()
-            inputFormatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
-            inputFormatter.locale = Locale(identifier: "en_US_POSIX")
-            
-            if let date = inputFormatter.date(from: date) {
-                let outputFormatter = DateFormatter()
-                outputFormatter.dateFormat = "MMMM dd yyyy, hh:mm a"
-                outputFormatter.locale = Locale.current
-                
-                cameraInfo.append(outputFormatter.string(from: date).capitalized)
-            }
+        if let date = dateTime, let dateFormatted = dateConvertion(date){
+            cameraInfo.append(dateFormatted)
         }
         
         if let artist = artist{
@@ -97,6 +103,8 @@ class PhotoInfoViewModel: ObservableObject{
         let speed: Double? = data.Speed
         let speedRef: String? = data.SpeedRef
         let gpsStatus: String? = data.Status
+        let gpsDate: String? = data.DateStamp
+        let gpsTime: String? = data.TimeStamp
         
         if let imgLatitude = latitude{
             gpsInfo.append("\(NSLocalizedString("latitude", tableName: "AuxLocales", comment: "")): \(imgLatitude)")
@@ -123,14 +131,13 @@ class PhotoInfoViewModel: ObservableObject{
             gpsInfo.append("\(photoSpeed) \(photoSpeedUnit)")
         }
         
-        if let imgGPSStatus = gpsStatus{
-            var GPSStatus = ""
-            switch imgGPSStatus{
-               case "A": GPSStatus = NSLocalizedString("gps_active", tableName: "AuxLocales", comment: "")
-               case "V": GPSStatus = NSLocalizedString("gps_void", tableName: "AuxLocales", comment: "")
-               default: GPSStatus = imgGPSStatus
-            }
-            gpsInfo.append(GPSStatus)
+        if var imgGPSStatus = gpsStatus, imgGPSStatus == "V"{
+            imgGPSStatus = NSLocalizedString("gps_void", tableName: "AuxLocales", comment: "")
+            gpsInfo.append(imgGPSStatus)
+        }
+        
+        if let gpsDate = gpsDate, let gpsTime = gpsTime, let dateConverted = dateConvertion("\(gpsDate) \(gpsTime)"){
+            gpsInfo.append("\(dateConverted) (UTC)")
         }
         
         return gpsInfo
