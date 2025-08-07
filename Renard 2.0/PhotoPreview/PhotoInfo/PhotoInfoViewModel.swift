@@ -44,6 +44,8 @@ class PhotoInfoViewModel: ObservableObject{
         let model: String? = data.Model
         let software: String? = data.Software
         let dateTime: String? = data.DateTime
+        let artist: String? = data.Artist
+        let copyright: String? = data.Copyright
         
         if let model = model,  let maker = maker {
             if model.contains(maker){
@@ -75,8 +77,21 @@ class PhotoInfoViewModel: ObservableObject{
             }
         }
         
+        if let artist = artist{
+            cameraInfo.append("\(NSLocalizedString("artist", comment: "")): \(artist)")
+        }
+        
+        if let rights = copyright{
+            cameraInfo.append("Copyright: \(rights)")
+        }
         
         return cameraInfo
+    }
+    
+    private func getGPSData(_ data: JSON) -> [String] {
+        var gpsInfo: [String] = []
+        
+        return gpsInfo
     }
     
     func setImageData() {
@@ -86,10 +101,23 @@ class PhotoInfoViewModel: ObservableObject{
         let exif: JSON? = jsonMetadata?.Exif
         
         if let tiffInfo = tiff{
-            var cameraInfoSection = PhotoViewData(titleSection: "camera")
+            var cameraInfoSection = PhotoViewData(titleSection: "TIFF")
             cameraInfoSection.elements = getCameraInfo(tiffInfo)
             imageData.append(cameraInfoSection)
         }
+        
+        if let GPSData = GPS{
+            var gpsInformation = PhotoViewData(titleSection: "GPS")
+            gpsInformation.elements = getGPSData(GPSData)
+            imageData.append(gpsInformation)
+            
+            
+            if let jsonData = try? JSONSerialization.data(withJSONObject: GPSData.data, options: [.prettyPrinted]) {
+                print(String(data: jsonData, encoding: .utf8)!) // JSON como texto
+            }
+            
+        }
+        
     }
 }
 
