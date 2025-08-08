@@ -224,9 +224,6 @@
         }
       }
     },
-    "artist" : {
-
-    },
     "camera" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -629,6 +626,15 @@
         }
       }
     },
+    "EXIF" : {
+      "shouldTranslate" : false
+    },
+    "EXIF (V %@)" : {
+
+    },
+    "EXIF AUX" : {
+      "shouldTranslate" : false
+    },
     "exportComplete" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -671,7 +677,7 @@
       }
     },
     "GPS" : {
-
+      "shouldTranslate" : false
     },
     "imagesAlreadyHEIF" : {
       "extractionState" : "manual",
@@ -2667,7 +2673,7 @@
       }
     },
     "TIFF" : {
-
+      "shouldTranslate" : false
     },
     "TotalPhotos" : {
       "extractionState" : "manual",
