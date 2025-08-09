@@ -32,3 +32,8 @@ metering_mode_spot = "Medição pontual";
 metering_mode_center_weighted = "Medição ponderada ao centro";
 metering_mode_partial = "Medição parcial";
 metering_mode_unknown = "Modo de medição desconhecido";
+image_stabilization_off = "Estabilização desativada";
+image_stabilization_optical = "Estabilização óptica ativada";
+image_stabilization_digital = "Estabilização digital ativada";
+image_stabilization_optical_digital = "Estabilização óptica + digital ativada";
+

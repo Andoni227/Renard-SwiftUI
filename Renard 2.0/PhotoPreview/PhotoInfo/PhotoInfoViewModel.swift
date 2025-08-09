@@ -41,52 +41,52 @@ class PhotoInfoViewModel: ObservableObject{
     
     private func getFlashDescription(of value: Int) -> String{
         switch value {
-            case 0:
-                return NSLocalizedString("flash_off", tableName: "AuxLocales", comment: "")
-            case 1:
-                return NSLocalizedString("flash_on", tableName: "AuxLocales", comment: "")
-            case 5:
-                return NSLocalizedString("flash_on_no_return", tableName: "AuxLocales", comment: "")
-            case 7:
-                return NSLocalizedString("flash_on_return_not_detected", tableName: "AuxLocales", comment: "")
-            case 9:
-                return NSLocalizedString("flash_on_auto", tableName: "AuxLocales", comment: "")
-            case 16:
-                return NSLocalizedString("flash_off_auto", tableName: "AuxLocales", comment: "")
-            case 24:
-                return NSLocalizedString("flash_off_auto_unavailable", tableName: "AuxLocales", comment: "")
-            case 25:
-                return NSLocalizedString("flash_on_auto_unavailable", tableName: "AuxLocales", comment: "")
-            case 32:
-                return NSLocalizedString("flash_off_suppressed", tableName: "AuxLocales", comment: "")
-            case 65:
-                return NSLocalizedString("flash_on_red_eye", tableName: "AuxLocales", comment: "")
-            case 73:
-                return NSLocalizedString("flash_on_auto_red_eye", tableName: "AuxLocales", comment: "")
-            case 77:
-                return NSLocalizedString("flash_on_auto_red_eye_return", tableName: "AuxLocales", comment: "")
-            default:
-                return NSLocalizedString("flash_unknown", tableName: "AuxLocales", comment: "")
-            }
+        case 0:
+            return NSLocalizedString("flash_off", tableName: "AuxLocales", comment: "")
+        case 1:
+            return NSLocalizedString("flash_on", tableName: "AuxLocales", comment: "")
+        case 5:
+            return NSLocalizedString("flash_on_no_return", tableName: "AuxLocales", comment: "")
+        case 7:
+            return NSLocalizedString("flash_on_return_not_detected", tableName: "AuxLocales", comment: "")
+        case 9:
+            return NSLocalizedString("flash_on_auto", tableName: "AuxLocales", comment: "")
+        case 16:
+            return NSLocalizedString("flash_off_auto", tableName: "AuxLocales", comment: "")
+        case 24:
+            return NSLocalizedString("flash_off_auto_unavailable", tableName: "AuxLocales", comment: "")
+        case 25:
+            return NSLocalizedString("flash_on_auto_unavailable", tableName: "AuxLocales", comment: "")
+        case 32:
+            return NSLocalizedString("flash_off_suppressed", tableName: "AuxLocales", comment: "")
+        case 65:
+            return NSLocalizedString("flash_on_red_eye", tableName: "AuxLocales", comment: "")
+        case 73:
+            return NSLocalizedString("flash_on_auto_red_eye", tableName: "AuxLocales", comment: "")
+        case 77:
+            return NSLocalizedString("flash_on_auto_red_eye_return", tableName: "AuxLocales", comment: "")
+        default:
+            return NSLocalizedString("flash_unknown", tableName: "AuxLocales", comment: "")
+        }
     }
     
     private func getMeteringModeDescription(of value: Int) -> String{
         switch value {
-          case 1:
-              return NSLocalizedString("metering_mode_average", tableName: "AuxLocales", comment: "")
-          case 2:
-              return NSLocalizedString("metering_mode_matrix", tableName: "AuxLocales", comment: "")
-          case 3:
-              return NSLocalizedString("metering_mode_spot", tableName: "AuxLocales", comment: "")
-          case 4:
-              return NSLocalizedString("metering_mode_center_weighted", tableName: "AuxLocales", comment: "")
-          case 5:
-              return NSLocalizedString("metering_mode_partial", tableName: "AuxLocales", comment: "")
-          case 0:
-              fallthrough
-          default:
-              return NSLocalizedString("metering_mode_unknown", tableName: "AuxLocales", comment: "")
-          }
+        case 1:
+            return NSLocalizedString("metering_mode_average", tableName: "AuxLocales", comment: "")
+        case 2:
+            return NSLocalizedString("metering_mode_matrix", tableName: "AuxLocales", comment: "")
+        case 3:
+            return NSLocalizedString("metering_mode_spot", tableName: "AuxLocales", comment: "")
+        case 4:
+            return NSLocalizedString("metering_mode_center_weighted", tableName: "AuxLocales", comment: "")
+        case 5:
+            return NSLocalizedString("metering_mode_partial", tableName: "AuxLocales", comment: "")
+        case 0:
+            fallthrough
+        default:
+            return NSLocalizedString("metering_mode_unknown", tableName: "AuxLocales", comment: "")
+        }
     }
     
     private func dateConvertion(_ date: String) -> String?{
@@ -103,6 +103,12 @@ class PhotoInfoViewModel: ObservableObject{
         }else {
             return nil
         }
+    }
+    
+    private func getExposureTime(of value: Decimal) -> String{
+        let division = Decimal(1)/abs(value)
+        let rounded = NSDecimalNumber(decimal: division).rounding(accordingToBehavior: nil)
+        return rounded == 0 ? "1":"1/\(rounded)"
     }
     
     private func getCameraInfo(_ data: JSON) -> [String] {
@@ -193,12 +199,6 @@ class PhotoInfoViewModel: ObservableObject{
         return gpsInfo
     }
     
-    private func getExposureTime(of value: Decimal) -> String{
-        let division = Decimal(1)/abs(value)
-        let rounded = NSDecimalNumber(decimal: division).rounding(accordingToBehavior: nil)
-        return "1/\(rounded)"
-    }
-    
     private func getEXIFData(_ data: JSON) -> [String] {
         var exifInfo: [String] = []
         let exifDateTime: String? = data.DateTimeOriginal
@@ -212,6 +212,8 @@ class PhotoInfoViewModel: ObservableObject{
         let exifFlash: Int? = data.Flash
         let exifWhiteBalance: Int? = data.WhiteBalance
         let exifMeteringMode: Int? = data.MeteringMode
+        let exifLensMake: String? = data.LensMake
+        let exifLensModel: String? = data.LensModel
         
         if let exifDate = exifDateTime, let dateConverted = dateConvertion("\(exifDate)"){
             exifInfo.append("\(dateConverted)")
@@ -249,13 +251,13 @@ class PhotoInfoViewModel: ObservableObject{
         if let photoWhiteBalance = exifWhiteBalance{
             var whiteBalance = ""
             switch photoWhiteBalance {
-             case 0:
+            case 0:
                 whiteBalance = NSLocalizedString("white_balance_auto", tableName: "AuxLocales", comment: "")
-             case 1:
+            case 1:
                 whiteBalance = NSLocalizedString("white_balance_manual", tableName: "AuxLocales", comment: "")
-             default:
+            default:
                 whiteBalance = NSLocalizedString("white_balance_unknown", tableName: "AuxLocales", comment: "")
-             }
+            }
             exifInfo.append(whiteBalance)
         }
         
@@ -263,7 +265,51 @@ class PhotoInfoViewModel: ObservableObject{
             exifInfo.append(getMeteringModeDescription(of: photoMeteringMode))
         }
         
+        if let photoLensModel = exifLensModel{
+            if let photoLensMake = exifLensMake{
+                exifInfo.append("\(photoLensMake) \(photoLensModel)")
+            }else{
+                exifInfo.append("\(photoLensModel)")
+            }
+        }
+        
         return exifInfo
+    }
+    
+    private func getExifAuxData(_ data: JSON) -> [String] {
+        var exifAuxInfo: [String] = []
+        let exifAuxFirmware: String? = data.Firmware
+        let exifAuxSN: String? = data.SerialNumber
+        let exifAuxEstabilization: Int? = data.ImageStabilization
+        let exifAuxLensID: Int? = data.LensID
+        
+        if let cameraFirmware = exifAuxFirmware{
+            exifAuxInfo.append(cameraFirmware)
+        }
+        
+        if let cameraSN = exifAuxSN{
+            exifAuxInfo.append("SN: \(cameraSN)")
+        }
+        
+        if let cameraStabilization = exifAuxEstabilization{
+            switch cameraStabilization {
+            case 1:
+                exifAuxInfo.append(NSLocalizedString("image_stabilization_on", tableName: "AuxLocales", comment: ""))
+            case 2:
+                exifAuxInfo.append(NSLocalizedString("image_stabilization_digital", tableName: "AuxLocales", comment: ""))
+            case 3:
+                exifAuxInfo.append(NSLocalizedString("image_stabilization_optical_digital", tableName: "AuxLocales", comment: ""))
+            case 0:
+                exifAuxInfo.append(NSLocalizedString("image_stabilization_off", tableName: "AuxLocales", comment: ""))
+            default: ()
+            }
+        }
+        
+        if let cameraLensID = exifAuxLensID{
+            exifAuxInfo.append("LensID: \(cameraLensID)")
+        }  
+        
+        return exifAuxInfo
     }
     
     func setImageData() {
@@ -288,22 +334,21 @@ class PhotoInfoViewModel: ObservableObject{
             var exifInfoTitle = LocalizedStringKey("EXIF")
             if let exifVersion: [Int] = exifData.ExifVersion{
                 let version = exifVersion.map { String($0) }.joined(separator: ".")
-                exifInfoTitle = LocalizedStringKey("EXIF (V \(version))")
+                exifInfoTitle = LocalizedStringKey("EXIF (V. \(version))")
             }
             
             var exifInformation = PhotoViewData(titleSection: exifInfoTitle)
             exifInformation.elements = getEXIFData(exifData)
-            if let jsonData = try? JSONSerialization.data(withJSONObject: exifData.data, options: [.prettyPrinted]) {
-                print(String(data: jsonData, encoding: .utf8)!) // JSON como texto
-            }
             imageData.append(exifInformation)
         }
         
         if let exifAuxData = exifAux{
             var exifAuxInformation = PhotoViewData(titleSection: "EXIF AUX")
-           /* if let jsonData = try? JSONSerialization.data(withJSONObject: exifAuxData.data, options: [.fragmentsAllowed]) {
+            
+            if let jsonData = try? JSONSerialization.data(withJSONObject: exifAuxData.data, options: [.fragmentsAllowed]) {
                 print(String(data: jsonData, encoding: .utf8)!) // JSON como texto
-            } */
+            }
+            exifAuxInformation.elements = getExifAuxData(exifAuxData)
             imageData.append(exifAuxInformation)
         }
     }

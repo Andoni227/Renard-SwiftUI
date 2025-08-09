@@ -629,7 +629,7 @@
     "EXIF" : {
       "shouldTranslate" : false
     },
-    "EXIF (V %@)" : {
+    "EXIF (V. %@)" : {
 
     },
     "EXIF AUX" : {

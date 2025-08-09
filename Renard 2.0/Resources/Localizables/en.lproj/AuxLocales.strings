@@ -32,3 +32,8 @@ metering_mode_spot = "Spot metering";
 metering_mode_center_weighted = "Center-weighted metering";
 metering_mode_partial = "Partial metering";
 metering_mode_unknown = "Unknown metering mode";
+image_stabilization_off = "Image stabilization off";
+image_stabilization_optical = "Optical image stabilization on";
+image_stabilization_digital = "Digital image stabilization on";
+image_stabilization_optical_digital = "Optical + digital image stabilization on";
+

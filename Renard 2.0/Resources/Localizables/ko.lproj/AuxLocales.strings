@@ -32,3 +32,8 @@ metering_mode_spot = "스팟 측광";
 metering_mode_center_weighted = "중앙 중점 측광";
 metering_mode_partial = "부분 측광";
 metering_mode_unknown = "알 수 없는 측광 모드";
+image_stabilization_off = "손떨림 보정 꺼짐";
+image_stabilization_optical = "광학 손떨림 보정 켜짐";
+image_stabilization_digital = "디지털 손떨림 보정 켜짐";
+image_stabilization_optical_digital = "광학 + 디지털 손떨림 보정 켜짐";
+
