@@ -111,12 +111,6 @@ struct MainDashboardView: View {
                                         selectedAsset = assetObject
                                     }
                                 })
-                                .simultaneousGesture(
-                                    LongPressGesture(minimumDuration: 0.3)
-                                        .onEnded { _ in
-                                            viewModel.isOnSelection = true
-                                        }
-                                )
                                 .id(assetObject.asset.localIdentifier)
                                 .contentShape(Rectangle())
                             }
