@@ -40,4 +40,5 @@ image_profile = "Perfil";
 image_resolution = "Resolución";
 image_size = "Peso";
 image_number = "Número de imagen";
+shutter_count = "Número de disparos de la cámara";
 

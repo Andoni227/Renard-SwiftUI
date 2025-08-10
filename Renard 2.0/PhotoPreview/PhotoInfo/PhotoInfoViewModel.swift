@@ -343,6 +343,17 @@ class PhotoInfoViewModel: ObservableObject{
         return iptcInfo
     }
     
+    private func getNikonData(_ data: JSON) -> [String] {
+        var nikonInfo: [String] = []
+        let shutterCount: Int? = data.ShutterCount
+        
+        if let cameraShutter = shutterCount{
+            nikonInfo.append("\(NSLocalizedString("shutter_count", tableName: "AuxLocales", comment: "")): \(cameraShutter)")
+        }
+        
+        return nikonInfo
+    }
+    
     private func setFileProperties() {
         var fileSection = PhotoViewData(titleSection: "file")
         var fileElements: [String] = []
@@ -379,6 +390,7 @@ class PhotoInfoViewModel: ObservableObject{
         let exifAux: JSON? = jsonMetadata?.ExifAux
         let exif: JSON? = jsonMetadata?.Exif
         let iptc: JSON? = jsonMetadata?.IPTC
+        let makerNikon: JSON? = jsonMetadata?.MakerNikon
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: jsonMetadata?.data, options: [.fragmentsAllowed]) {
             print(String(data: jsonData, encoding: .utf8)!) // JSON como texto
@@ -420,6 +432,12 @@ class PhotoInfoViewModel: ObservableObject{
             var iptcSection = PhotoViewData(titleSection: "IPTC")
             iptcSection.elements = getIPTCData(iptcData)
             imageData.append(iptcSection)
+        }
+        
+        if let nikonInfo = makerNikon{
+            var nikonSection = PhotoViewData(titleSection: "NIKON")
+            nikonSection.elements = getNikonData(nikonInfo)
+            imageData.append(nikonSection)
         }
     }
 }

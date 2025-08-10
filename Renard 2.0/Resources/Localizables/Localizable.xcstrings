@@ -1499,7 +1499,7 @@
       }
     },
     "IPTC" : {
-
+      "shouldTranslate" : false
     },
     "LessCommonFormat" : {
       "extractionState" : "manual",
@@ -1828,6 +1828,9 @@
           }
         }
       }
+    },
+    "NIKON" : {
+      "shouldTranslate" : false
     },
     "openSettings" : {
       "extractionState" : "manual",

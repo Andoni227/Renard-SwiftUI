@@ -40,3 +40,4 @@ image_profile = "Profile";
 image_resolution = "Resolution";
 image_size = "Size";
 image_number = "Image number";
+shutter_count = "Shutter count";

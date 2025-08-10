@@ -40,3 +40,4 @@ image_profile = "프로필";
 image_resolution = "해상도";
 image_size = "크기";
 image_number = "이미지 번호";
+shutter_count = "셔터 횟수";

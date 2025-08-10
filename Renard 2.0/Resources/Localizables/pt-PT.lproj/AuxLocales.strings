@@ -40,3 +40,4 @@ image_profile = "Perfil";
 image_resolution = "Resolução";
 image_size = "Tamanho";
 image_number = "Número da imagem";
+shutter_count = "Contagem do obturador";
