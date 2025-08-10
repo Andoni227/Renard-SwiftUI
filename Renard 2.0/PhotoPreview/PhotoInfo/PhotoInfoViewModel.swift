@@ -131,6 +131,14 @@ class PhotoInfoViewModel: ObservableObject{
         return NSLocalizedString(key, tableName: "AuxLocales", comment: "")
     }
     
+    private func cleanEmptySections(){
+        for section in imageData{
+            if section.elements.count == 0{
+                imageData.removeAll(where: { $0 == section })
+            }
+        }
+    }
+    
     private func getTIFFData(_ data: JSON) -> [String] {
         var cameraInfo: [String] = []
         let maker: String? = data.Make
@@ -165,11 +173,11 @@ class PhotoInfoViewModel: ObservableObject{
             cameraInfo.append(dateFormatted)
         }
         
-        if let artist = artist{
+        if let artist = artist, artist != ""{
             cameraInfo.append("\(NSLocalizedString("artist", tableName: "AuxLocales", comment: "")): \(artist)")
         }
         
-        if let rights = copyright{
+        if let rights = copyright, copyright != ""{
             cameraInfo.append("Copyright: \(rights)")
         }
         
@@ -462,11 +470,13 @@ class PhotoInfoViewModel: ObservableObject{
             nikonSection.elements = getNikonData(nikonInfo)
             imageData.append(nikonSection)
         }
+        
+        cleanEmptySections()
     }
 }
 
 typealias PhotosViewData = [PhotoViewData]
-struct PhotoViewData: Identifiable {
+struct PhotoViewData: Identifiable, Equatable {
     var id = UUID()
     var titleSection: LocalizedStringKey
     var titleFooter: LocalizedStringKey? = nil

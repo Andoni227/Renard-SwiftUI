@@ -10,6 +10,7 @@ import Photos
 
 struct PhotoInfoView: View {
     @StateObject private var viewModel = PhotoInfoViewModel()
+    @Environment(\.dismiss) var dismiss
     let asset: AssetObject
     
     var body: some View {
@@ -30,8 +31,25 @@ struct PhotoInfoView: View {
         .scrollContentBackground(.hidden)
         .listStyle(.automatic)
         .background(Color.renardDarkBlue.ignoresSafeArea())
-        .toolbarBackground(Color.renardMediumBlue, for: .navigationBar)
-        .toolbarColorScheme(.light, for: .navigationBar)
+        .toolbarBackground(Color.renardDarkBlue, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.white)
+                        .imageScale(.large)
+                }
+            }
+            ToolbarItem(placement: .principal) {
+                Text(LocalizedStringKey(viewModel.fileName ?? ""))
+                    .font(.custom("Montserrat-Medium", size: 16))
+                    .foregroundColor(.white)
+            }
+        }
         .onAppear{
             viewModel.getAssetMetadata(asset: asset.asset)
         }
