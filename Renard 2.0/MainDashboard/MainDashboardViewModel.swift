@@ -54,7 +54,10 @@ class MainDashboardViewModel: ObservableObject {
     
     func requestAuthorizationAndLoad() {
         setSize()
-        guard photos.isEmpty else { return }
+        guard photos.isEmpty else {
+            loadPhotos()
+            return
+        }
         PHPhotoLibrary.requestAuthorization { status in
             DispatchQueue.main.async {
                 guard status == .authorized || status == .limited else {
