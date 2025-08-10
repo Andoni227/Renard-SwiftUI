@@ -39,3 +39,4 @@ image_stabilization_optical_digital = "광학 + 디지털 손떨림 보정 켜�
 image_profile = "프로필";
 image_resolution = "해상도";
 image_size = "크기";
+image_number = "이미지 번호";

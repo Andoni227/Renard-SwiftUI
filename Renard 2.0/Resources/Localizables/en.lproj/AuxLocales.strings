@@ -39,3 +39,4 @@ image_stabilization_optical_digital = "Optical + digital image stabilization on"
 image_profile = "Profile";
 image_resolution = "Resolution";
 image_size = "Size";
+image_number = "Image number";

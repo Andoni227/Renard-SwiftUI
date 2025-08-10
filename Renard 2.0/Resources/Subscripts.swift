@@ -28,7 +28,7 @@ struct JSON {
     let data: [String: Any]
     
     subscript<T>(dynamicMember member: String) -> T? {
-        let specialKeys = ["TIFF", "GPS", "Exif", "MakerApple", "ExifAux"]
+        let specialKeys = ["TIFF", "GPS", "Exif", "MakerApple", "ExifAux","IPTC"]
         let key = specialKeys.contains(member) ? "{\(member)}" : member
         let value = data[key]
         if let nestedDict = value as? [String: Any]{

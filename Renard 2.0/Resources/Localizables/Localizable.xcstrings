@@ -1498,6 +1498,9 @@
         }
       }
     },
+    "IPTC" : {
+
+    },
     "LessCommonFormat" : {
       "extractionState" : "manual",
       "localizations" : {

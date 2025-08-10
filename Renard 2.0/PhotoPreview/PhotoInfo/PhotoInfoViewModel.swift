@@ -290,6 +290,7 @@ class PhotoInfoViewModel: ObservableObject{
         let exifAuxSN: String? = data.SerialNumber
         let exifAuxEstabilization: Int? = data.ImageStabilization
         let exifAuxLensID: Int? = data.LensID
+        let exifAuxImgNumber: Int? = data.ImageNumber
         
         if let cameraFirmware = exifAuxFirmware{
             exifAuxInfo.append(cameraFirmware)
@@ -317,7 +318,29 @@ class PhotoInfoViewModel: ObservableObject{
             exifAuxInfo.append("LensID: \(cameraLensID)")
         }
         
+        if let imgNumber = exifAuxImgNumber{
+            exifAuxInfo.append("\(NSLocalizedString("image_number", tableName: "AuxLocales", comment: "")): \(imgNumber)")
+        }
+        
         return exifAuxInfo
+    }
+    
+    private func getIPTCData(_ data: JSON) -> [String] {
+        var iptcInfo: [String] = []
+        let imageRate: Int? = data.StarRating
+        let keywords: [String]? = data.Keywords
+        
+        if let photoStars = imageRate{
+            let filledStars = max(0, min(photoStars, 5))
+            let emptyStars = 5 - filledStars
+            iptcInfo.append(String(repeating: "★", count: filledStars) + String(repeating: "☆", count: emptyStars))
+        }
+        
+        if let photoKeywords = keywords{
+            iptcInfo.append(photoKeywords.joined(separator: " "))
+        }
+        
+        return iptcInfo
     }
     
     private func setFileProperties() {
@@ -355,7 +378,7 @@ class PhotoInfoViewModel: ObservableObject{
         let GPS: JSON? = jsonMetadata?.GPS
         let exifAux: JSON? = jsonMetadata?.ExifAux
         let exif: JSON? = jsonMetadata?.Exif
-        
+        let iptc: JSON? = jsonMetadata?.IPTC
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: jsonMetadata?.data, options: [.fragmentsAllowed]) {
             print(String(data: jsonData, encoding: .utf8)!) // JSON como texto
@@ -391,6 +414,12 @@ class PhotoInfoViewModel: ObservableObject{
             var exifAuxInformation = PhotoViewData(titleSection: "EXIF AUX")
             exifAuxInformation.elements = getExifAuxData(exifAuxData)
             imageData.append(exifAuxInformation)
+        }
+        
+        if let iptcData = iptc{
+            var iptcSection = PhotoViewData(titleSection: "IPTC")
+            iptcSection.elements = getIPTCData(iptcData)
+            imageData.append(iptcSection)
         }
     }
 }
