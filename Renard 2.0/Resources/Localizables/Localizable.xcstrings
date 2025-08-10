@@ -630,7 +630,7 @@
       "shouldTranslate" : false
     },
     "EXIF (V. %@)" : {
-
+      "shouldTranslate" : false
     },
     "EXIF AUX" : {
       "shouldTranslate" : false
@@ -672,6 +672,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exportação concluída"
+          }
+        }
+      }
+    },
+    "file" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivo"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivo"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arquivo"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ficheiro"
           }
         }
       }

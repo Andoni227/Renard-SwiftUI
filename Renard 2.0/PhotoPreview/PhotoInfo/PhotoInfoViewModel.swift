@@ -14,6 +14,8 @@ class PhotoInfoViewModel: ObservableObject{
     @Published var fileName: String?
     @Published var imageData: PhotosViewData = []
     
+    private var imageSize: String?
+    
     func getAssetMetadata(asset: PHAsset) {
         imageData = []
         let options = PHContentEditingInputRequestOptions()
@@ -21,6 +23,8 @@ class PhotoInfoViewModel: ObservableObject{
         
         let resources = PHAssetResource.assetResources(for: asset)
         self.fileName = resources.first?.originalFilename
+        
+        imageSize = asset.getSize()
         
         asset.requestContentEditingInput(with: options) { [self] contentEditingInput, _ in
             guard let input = contentEditingInput else {
@@ -120,11 +124,15 @@ class PhotoInfoViewModel: ObservableObject{
         let artist: String? = data.Artist
         let copyright: String? = data.Copyright
         
-        if let model = model,  let maker = maker {
-            if model.contains(maker){
-                cameraInfo.append(model)
+        if let maker = maker {
+            if let model = model{
+                if model.contains(maker){
+                    cameraInfo.append(model)
+                }else{
+                    cameraInfo.append("\(maker) \(model)")
+                }
             }else{
-                cameraInfo.append("\(maker) \(model)")
+                cameraInfo.append(maker)
             }
         }
         
@@ -307,9 +315,39 @@ class PhotoInfoViewModel: ObservableObject{
         
         if let cameraLensID = exifAuxLensID{
             exifAuxInfo.append("LensID: \(cameraLensID)")
-        }  
+        }
         
         return exifAuxInfo
+    }
+    
+    private func setFileProperties() {
+        var fileSection = PhotoViewData(titleSection: "file")
+        var fileElements: [String] = []
+        let imgProfile: String? = jsonMetadata?.ProfileName
+        let imgXdimension: Int? = jsonMetadata?.PixelWidth
+        let imgYdimension: Int? = jsonMetadata?.PixelHeight
+        
+        
+        if let imgSize = imageSize{
+            fileElements.append("\(NSLocalizedString("image_size", tableName: "AuxLocales", comment: "")): \(imgSize)")
+        }
+        
+        if let xDimension = imgXdimension, let yDimension = imgYdimension{
+            
+            let width = Double(xDimension)
+            let height = Double(yDimension)
+            let resolution = Double((width * height / Double(1000000)))
+            let resolutionString =  String(format: "%.1f", resolution)
+            
+            fileElements.append("\(NSLocalizedString("image_resolution", tableName: "AuxLocales", comment: "")): \(xDimension)x\(yDimension) (\(resolutionString)MP)")
+        }
+        
+        if let profile = imgProfile{
+            fileElements.append("\(NSLocalizedString("image_profile", tableName: "AuxLocales", comment: "")): \(profile)")
+        }
+        
+        fileSection.elements = fileElements
+        imageData.append(fileSection)
     }
     
     func setImageData() {
@@ -317,6 +355,13 @@ class PhotoInfoViewModel: ObservableObject{
         let GPS: JSON? = jsonMetadata?.GPS
         let exifAux: JSON? = jsonMetadata?.ExifAux
         let exif: JSON? = jsonMetadata?.Exif
+        
+        
+        if let jsonData = try? JSONSerialization.data(withJSONObject: jsonMetadata?.data, options: [.fragmentsAllowed]) {
+            print(String(data: jsonData, encoding: .utf8)!) // JSON como texto
+        }
+        
+        setFileProperties()
         
         if let tiffInfo = tiff{
             var cameraInfoSection = PhotoViewData(titleSection: "TIFF")
@@ -344,10 +389,6 @@ class PhotoInfoViewModel: ObservableObject{
         
         if let exifAuxData = exifAux{
             var exifAuxInformation = PhotoViewData(titleSection: "EXIF AUX")
-            
-            if let jsonData = try? JSONSerialization.data(withJSONObject: exifAuxData.data, options: [.fragmentsAllowed]) {
-                print(String(data: jsonData, encoding: .utf8)!) // JSON como texto
-            }
             exifAuxInformation.elements = getExifAuxData(exifAuxData)
             imageData.append(exifAuxInformation)
         }

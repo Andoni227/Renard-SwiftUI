@@ -36,4 +36,6 @@ image_stabilization_off = "Image stabilization off";
 image_stabilization_optical = "Optical image stabilization on";
 image_stabilization_digital = "Digital image stabilization on";
 image_stabilization_optical_digital = "Optical + digital image stabilization on";
-
+image_profile = "Profile";
+image_resolution = "Resolution";
+image_size = "Size";

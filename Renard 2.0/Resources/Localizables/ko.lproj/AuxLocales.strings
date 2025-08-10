@@ -36,4 +36,6 @@ image_stabilization_off = "손떨림 보정 꺼짐";
 image_stabilization_optical = "광학 손떨림 보정 켜짐";
 image_stabilization_digital = "디지털 손떨림 보정 켜짐";
 image_stabilization_optical_digital = "광학 + 디지털 손떨림 보정 켜짐";
-
+image_profile = "프로필";
+image_resolution = "해상도";
+image_size = "크기";

@@ -36,4 +36,6 @@ image_stabilization_off = "Estabilización desactivada";
 image_stabilization_optical = "Estabilización óptica activada";
 image_stabilization_digital = "Estabilización digital activada";
 image_stabilization_optical_digital = "Estabilización óptica + digital activada";
-
+image_profile = "Perfil";
+image_resolution = "Resolución";
+image_size = "Tamaño";
