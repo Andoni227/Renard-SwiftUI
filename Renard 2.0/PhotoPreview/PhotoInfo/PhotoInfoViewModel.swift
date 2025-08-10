@@ -115,7 +115,23 @@ class PhotoInfoViewModel: ObservableObject{
         return rounded == 0 ? "1":"1/\(rounded)"
     }
     
-    private func getCameraInfo(_ data: JSON) -> [String] {
+    private func getImageOrientation(of value: Int) -> String{
+        let key: String
+        switch value {
+        case 1: key = "orientation_normal"
+        case 2: key = "orientation_mirror_horizontal"
+        case 3: key = "orientation_rotated_180"
+        case 4: key = "orientation_mirror_vertical"
+        case 5: key = "orientation_rotated_90_cw_mirror_horizontal"
+        case 6: key = "orientation_rotated_90_cw"
+        case 7: key = "orientation_rotated_90_ccw_mirror_horizontal"
+        case 8: key = "orientation_rotated_90_ccw"
+        default: key = "orientation_normal"
+        }
+        return NSLocalizedString(key, tableName: "AuxLocales", comment: "")
+    }
+    
+    private func getTIFFData(_ data: JSON) -> [String] {
         var cameraInfo: [String] = []
         let maker: String? = data.Make
         let model: String? = data.Model
@@ -123,6 +139,7 @@ class PhotoInfoViewModel: ObservableObject{
         let dateTime: String? = data.DateTime
         let artist: String? = data.Artist
         let copyright: String? = data.Copyright
+        let orientation: Int? = data.Orientation
         
         if let maker = maker {
             if let model = model{
@@ -154,6 +171,10 @@ class PhotoInfoViewModel: ObservableObject{
         
         if let rights = copyright{
             cameraInfo.append("Copyright: \(rights)")
+        }
+        
+        if let imgOrientation = orientation{
+            cameraInfo.append("\(NSLocalizedString("orientation", tableName: "AuxLocales", comment: "")): \(getImageOrientation(of: imgOrientation))")
         }
         
         return cameraInfo
@@ -329,6 +350,8 @@ class PhotoInfoViewModel: ObservableObject{
         var iptcInfo: [String] = []
         let imageRate: Int? = data.StarRating
         let keywords: [String]? = data.Keywords
+        let contactInfo: JSON? = data.CreatorContactInfo
+        let contactEmail: String? = contactInfo?.CiEmailWork
         
         if let photoStars = imageRate{
             let filledStars = max(0, min(photoStars, 5))
@@ -338,6 +361,10 @@ class PhotoInfoViewModel: ObservableObject{
         
         if let photoKeywords = keywords{
             iptcInfo.append(photoKeywords.joined(separator: " "))
+        }
+        
+        if let photoEmail = contactEmail{
+            iptcInfo.append("\(photoEmail)")
         }
         
         return iptcInfo
@@ -392,15 +419,11 @@ class PhotoInfoViewModel: ObservableObject{
         let iptc: JSON? = jsonMetadata?.IPTC
         let makerNikon: JSON? = jsonMetadata?.MakerNikon
         
-        if let jsonData = try? JSONSerialization.data(withJSONObject: jsonMetadata?.data, options: [.fragmentsAllowed]) {
-            print(String(data: jsonData, encoding: .utf8)!) // JSON como texto
-        }
-        
         setFileProperties()
         
         if let tiffInfo = tiff{
             var cameraInfoSection = PhotoViewData(titleSection: "TIFF")
-            cameraInfoSection.elements = getCameraInfo(tiffInfo)
+            cameraInfoSection.elements = getTIFFData(tiffInfo)
             imageData.append(cameraInfoSection)
         }
         

@@ -41,4 +41,13 @@ image_resolution = "Resolución";
 image_size = "Peso";
 image_number = "Número de imagen";
 shutter_count = "Número de disparos de la cámara";
+orientation = "Orientación";
+orientation_normal = "Normal";
+orientation_mirror_horizontal = "Espejo horizontal";
+orientation_rotated_180 = "Rotado 180°";
+orientation_mirror_vertical = "Espejo vertical";
+orientation_rotated_90_cw_mirror_horizontal = "Rotado 90° CW y espejo horizontal";
+orientation_rotated_90_cw = "Rotado 90° CW";
+orientation_rotated_90_ccw_mirror_horizontal = "Rotado 90° CCW y espejo horizontal";
+orientation_rotated_90_ccw = "Rotado 90° CCW";
 
