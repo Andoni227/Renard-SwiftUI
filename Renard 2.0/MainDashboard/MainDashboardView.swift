@@ -125,6 +125,7 @@ struct MainDashboardView: View {
                             .listRowBackground(Color.renardBackgroundHeavy)
                         }
                     }
+                    .preferredColorScheme(.dark)
                     .listStyle(.plain)
                     .scrollIndicators(.visible)
                     .scrollContentBackground(.hidden)
