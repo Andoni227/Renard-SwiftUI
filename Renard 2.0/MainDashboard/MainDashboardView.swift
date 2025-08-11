@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  Renard 2.0
-//
-//  Created by Andoni Suarez on 21/05/25.
-//
-
 import SwiftUI
 import Photos
 import PhotosUI
@@ -18,9 +11,8 @@ struct MainDashboardView: View {
     @Environment(\.scenePhase) private var scenePhase
     let imageManager = PHImageManager.default()
     let options = PHImageRequestOptions()
-    var galleryColumns: [GridItem] {
-        let count = getElementsInScreen(for: 120.0)
-        return Array(repeating: GridItem(.flexible(), spacing: 10), count: count)
+    var columnsCount: Int {
+        max(1, getElementsInScreen(for: 120.0))
     }
     
     var body: some View {
@@ -75,59 +67,76 @@ struct MainDashboardView: View {
                 )
                 .padding()
                 .background(Color.renardMediumBlue)
-                
-                let rows = [
-                    GridItem()
-                ]
+
+                let rows = [ GridItem() ]
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHGrid(rows: rows, spacing: 10) {
                         ForEach(viewModel.availableFormats, id: \.self) { format in
                             TitleFormatView(imageFormat: format, selectedFormat: $viewModel.selectedFormat)
                         }
                     }
-                    .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
+                    .padding(.horizontal, 15)
                     .frame(height: 35)
                 }
                 .background(Color.renardMediumBlue)
                 .padding(.vertical, -8)
-                
-                if viewModel.isLoading{
+
+                if viewModel.isLoading {
                     Color.renardBackgroundHeavy
                         .frame(height: 100.0)
                         .padding(.top, 22.0)
                     LoadingView(progress: $viewModel.convertionProgress, showLabel: true)
                         .padding()
-                    
                     Color.renardBackgroundHeavy
                         .ignoresSafeArea()
-                }else{
-                    ScrollView(showsIndicators: true) {
-                        LazyVGrid(columns: galleryColumns, spacing: 10) {
-                            ForEach(viewModel.getPhotosForFormat(), id: \.asset.localIdentifier) { assetObject in
-                                PhotoThumbnailView(asset: assetObject.asset, size: viewModel.imagesSize, isSelected: viewModel.selectedAssetIDs.contains(assetObject.asset.localIdentifier), imageManager: self.imageManager, managerOptions: self.options, action: {
-                                    if viewModel.isOnSelection {
-                                        viewModel.toggleSelection(of: assetObject.asset)
-                                    }else{
-                                        selectedAsset = assetObject
+                } else {
+                    let assets = viewModel.getPhotosForFormat()
+                    let rowsOfAssets = assets.chunked(into: columnsCount)
+                    List {
+                        ForEach(0 ..< rowsOfAssets.count, id: \.self) { rowIndex in
+                            HStack(spacing: 10) {
+                                ForEach(rowsOfAssets[rowIndex], id: \.asset.localIdentifier) { assetObject in
+                                    PhotoThumbnailView(
+                                        asset: assetObject.asset,
+                                        size: viewModel.imagesSize,
+                                        isSelected: viewModel.selectedAssetIDs.contains(assetObject.asset.localIdentifier),
+                                        imageManager: self.imageManager,
+                                        managerOptions: self.options,
+                                        action: {})
+                                    .id(assetObject.asset.localIdentifier)
+                                    .contentShape(Rectangle())
+                                    .frame(maxWidth: .infinity)
+                                    .onTapGesture {
+                                            if viewModel.isOnSelection {
+                                                viewModel.toggleSelection(of: assetObject.asset)
+                                            } else {
+                                                selectedAsset = assetObject
+                                            }
+                                        }
+                                }
+                                if rowsOfAssets[rowIndex].count < columnsCount {
+                                    ForEach(0 ..< (columnsCount - rowsOfAssets[rowIndex].count), id: \.self) { _ in
+                                        Color.clear.frame(maxWidth: .infinity, minHeight: 0)
                                     }
-                                })
-                                .id(assetObject.asset.localIdentifier)
-                                .contentShape(Rectangle())
+                                }
                             }
+                            .padding(.vertical, 6)
+                            .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
+                            .listRowBackground(Color.renardBackgroundHeavy)
                         }
-                        .padding()
                     }
+                    .listStyle(.plain)
+                    .scrollIndicators(.visible)
+                    .scrollContentBackground(.hidden)
                     .background(Color.renardBackgroundHeavy)
                 }
             }
             .background(Color.renardBackgroundHeavy)
-            .overlay{
+            .overlay {
                 VStack {
-                    if viewModel.isOnSelection && viewModel.selectedAssetIDs.count > 0{
+                    if viewModel.isOnSelection && viewModel.selectedAssetIDs.count > 0 {
                         MainDashboardBottomView(photoSize: $viewModel.selectedAssetsSize, deleteAfterSave: $viewModel.deleteAfterSave, btnAction: {
-                            Task {
-                                await viewModel.startConvertion()
-                            }
+                            Task { await viewModel.startConvertion() }
                         }, btnDisabled: viewModel.isLoading)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
@@ -136,29 +145,21 @@ struct MainDashboardView: View {
             }
         }
         .sheet(isPresented: $showFAQ) {
-            NavigationStack {
-                AboutAppView()
-            }
+            NavigationStack { AboutAppView() }
         }
-        .sheet(item: $selectedAsset){ asset in
-            NavigationStack{
-                PhotoPreview(asset: asset)
-            }
+        .sheet(item: $selectedAsset) { asset in
+            NavigationStack { PhotoPreview(asset: asset) }
         }
-        .onAppear {
-            viewModel.requestAuthorizationAndLoad()
-        }
+        .onAppear { viewModel.requestAuthorizationAndLoad() }
         .environmentObject(viewModel)
         .alert("saveSuccess", isPresented: $viewModel.processComplete) {
-            Button("accept", role: .cancel, action: {
+            Button("accept", role: .cancel) {
                 viewModel.clearSelection()
                 viewModel.loadPhotos()
-            })
+            }
         }
         .alert("camera_permission", isPresented: $viewModel.needsPemission) {
-            Button("accept", role: .cancel, action: {
-                viewModel.openSettings()
-            })
+            Button("accept", role: .cancel) { viewModel.openSettings() }
         }
         .alert("requestPermission", isPresented: $viewModel.limitedAccess) {
             Button("openSettings", role: .cancel) {
@@ -184,6 +185,22 @@ struct MainDashboardView: View {
     }
 }
 
+
+fileprivate extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        guard size > 0 else { return [Array(self)] }
+        var chunks: [[Element]] = []
+        var index = 0
+        while index < self.count {
+            let end = Swift.min(index + size, self.count)
+            chunks.append(Array(self[index..<end]))
+            index += size
+        }
+        return chunks
+    }
+}
+
+// Preview
 #Preview {
     MainDashboardView()
 }

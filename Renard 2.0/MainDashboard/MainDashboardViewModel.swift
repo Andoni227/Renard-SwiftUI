@@ -161,7 +161,7 @@ class MainDashboardViewModel: ObservableObject {
     @MainActor
     func getPhotosForFormat() -> [AssetObject] {
         let photosForFormat = photos.filter { $0.format == selectedFormat }
-        return Array(photosForFormat.prefix(400))
+        return Array(photosForFormat)
     }
     
     @MainActor
