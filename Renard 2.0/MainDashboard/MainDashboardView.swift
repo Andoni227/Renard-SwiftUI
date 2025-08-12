@@ -66,7 +66,7 @@ struct MainDashboardView: View {
                     alignment: .center
                 )
                 .padding()
-                .background(Color.renardMediumBlue)
+                .background(Color.renardDarkBlue)
 
                 let rows = [ GridItem() ]
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -78,7 +78,7 @@ struct MainDashboardView: View {
                     .padding(.horizontal, 15)
                     .frame(height: 35)
                 }
-                .background(Color.renardMediumBlue)
+                .background(Color.renardDarkBlue)
                 .padding(.vertical, -8)
 
                 if viewModel.isLoading {
@@ -125,6 +125,7 @@ struct MainDashboardView: View {
                             .listRowBackground(Color.renardBackgroundHeavy)
                         }
                     }
+                    .padding(.top, 10.0)
                     .preferredColorScheme(.dark)
                     .listStyle(.plain)
                     .scrollIndicators(.visible)
