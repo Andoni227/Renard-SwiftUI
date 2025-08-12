@@ -96,9 +96,8 @@ extension PHAsset{
         let resources = PHAssetResource.assetResources(for: self)
         var sizeOnDisk: Int64? = 0
         
-        if let resource = resources.first {
-            let unsignedInt64 = resource.value(forKey: "fileSize") as? CLong
-            sizeOnDisk = Int64(bitPattern: UInt64(unsignedInt64!))
+        if let resource = resources.first, let unsignedInt64 = resource.value(forKey: "fileSize") as? CLong {
+            sizeOnDisk = Int64(bitPattern: UInt64(unsignedInt64))
         }
         
         let formatter:ByteCountFormatter = ByteCountFormatter()
