@@ -7,11 +7,7 @@
 import Photos
 import SwiftUI
 
-enum Router: Hashable{
-    static func == (lhs: Router, rhs: Router) -> Bool {
-        return lhs.hashValue == rhs.hashValue
-    }
-    
+enum Router: Hashable, Equatable{
     case preferences
     case statistics
     case photoInfo(asset: AssetObject)
