@@ -43,6 +43,25 @@ class PhotoInfoViewModel: ObservableObject{
         }
     }
     
+    private func getProgramDescription(of value: Int) -> String{
+        let key: String
+        switch value {
+        case 0: key = "exposure_program_0"
+        case 1: key = "exposure_program_1"
+        case 2: key = "exposure_program_2"
+        case 3: key = "exposure_program_3"
+        case 4: key = "exposure_program_4"
+        case 5: key = "exposure_program_5"
+        case 6: key = "exposure_program_6"
+        case 7: key = "exposure_program_7"
+        case 8: key = "exposure_program_8"
+        case 9: key = "exposure_program_9"
+        case 10: key = "exposure_program_10"
+        default: key = "exposure_program_0"
+        }
+        return NSLocalizedString(key, tableName: "AuxLocales", comment: "")
+    }
+    
     private func getFlashDescription(of value: Int) -> String{
         switch value {
         case 0:
@@ -110,9 +129,13 @@ class PhotoInfoViewModel: ObservableObject{
     }
     
     private func getExposureTime(of value: Decimal) -> String{
-        let division = Decimal(1)/abs(value)
-        let rounded = NSDecimalNumber(decimal: division).rounding(accordingToBehavior: nil)
-        return rounded == 0 ? "1":"1/\(rounded)"
+        if value >= 1.0{
+            return "\(NSDecimalNumber(decimal: value).rounding(accordingToBehavior: nil))"
+        }else{
+            let division = Decimal(1)/abs(value)
+            let rounded = NSDecimalNumber(decimal: division).rounding(accordingToBehavior: nil)
+            return rounded == 0 ? "1":"1/\(rounded)"
+        }
     }
     
     private func getImageOrientation(of value: Int) -> String{
@@ -251,6 +274,8 @@ class PhotoInfoViewModel: ObservableObject{
         let exifMeteringMode: Int? = data.MeteringMode
         let exifLensMake: String? = data.LensMake
         let exifLensModel: String? = data.LensModel
+        let exifBodySN: String? = data.BodySerialNumber
+        let exifProgram: Int? = data.ExposureProgram
         
         if let exifDate = exifDateTime, let dateConverted = dateConvertion("\(exifDate)"){
             exifInfo.append("\(dateConverted)")
@@ -308,6 +333,15 @@ class PhotoInfoViewModel: ObservableObject{
             }else{
                 exifInfo.append("\(photoLensModel)")
             }
+        }
+        
+        if let photoProgram = exifProgram{
+            let programDesc = getProgramDescription(of: photoProgram)
+            exifInfo.append("\(NSLocalizedString("program", tableName: "AuxLocales", comment: "")): \(programDesc)")
+        }
+        
+        if let bodySN = exifBodySN{
+            exifInfo.append("SN: \(bodySN)")
         }
         
         return exifInfo

@@ -50,4 +50,15 @@ orientation_rotated_90_cw_mirror_horizontal = "Rotado 90° CW y espejo horizonta
 orientation_rotated_90_cw = "Rotado 90° CW";
 orientation_rotated_90_ccw_mirror_horizontal = "Rotado 90° CCW y espejo horizontal";
 orientation_rotated_90_ccw = "Rotado 90° CCW";
-
+program = "Programa";
+exposure_program_0 = "Desconocido";
+exposure_program_1 = "Manual";
+exposure_program_2 = "Automático";
+exposure_program_3 = "Prioridad a apertura";
+exposure_program_4 = "Prioridad a obturación";
+exposure_program_5 = "Programa creativo";
+exposure_program_6 = "Programa acción rápida";
+exposure_program_7 = "Modo paisaje";
+exposure_program_8 = "Modo close-up";
+exposure_program_9 = "Modo deportes";
+exposure_program_10 = "Modo cine/video";

@@ -19,7 +19,7 @@ class AppCleaner{
                 try fileManager.removeItem(at: fileURL)
             }
         } catch {
-            print("Error clearing temporary directory: \(error.localizedDescription)")
+            print("Error al borrar directorio temporal \(error.localizedDescription)")
         }
     }
 }
