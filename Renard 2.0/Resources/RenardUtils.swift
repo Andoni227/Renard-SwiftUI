@@ -50,6 +50,7 @@ enum ImageType: String{
     case GIF = "com.compuserve.gif"
     case JPG = "public.jpeg"
     case HEIC = "public.heic"
+    case HEIF = "public.heif"
     case PNG = "public.png"
     case TIFF = "public.tiff"
     case WEBP = "org.webmproject.webp"
@@ -83,6 +84,8 @@ enum ImageType: String{
             return "WEBP"
         case .AVIF:
             return "AVIF"
+        case .HEIF:
+            return "HEIF"
         case .UNOWNED:
             return "RAW"
         case .NOTIMAGE:

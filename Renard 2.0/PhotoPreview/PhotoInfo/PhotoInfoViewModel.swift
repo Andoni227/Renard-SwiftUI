@@ -162,6 +162,11 @@ class PhotoInfoViewModel: ObservableObject{
         }
     }
     
+    private func getLightSourceDescription(of value: Int) -> String {
+        let key = "light_source_\(value)"
+        return NSLocalizedString(key, tableName: "AuxLocales", comment: "")
+    }
+    
     private func getTIFFData(_ data: JSON) -> [String] {
         var cameraInfo: [String] = []
         let maker: String? = data.Make
@@ -276,6 +281,7 @@ class PhotoInfoViewModel: ObservableObject{
         let exifLensModel: String? = data.LensModel
         let exifBodySN: String? = data.BodySerialNumber
         let exifProgram: Int? = data.ExposureProgram
+        let exifLightSource: Int? = data.LightSource
         
         if let exifDate = exifDateTime, let dateConverted = dateConvertion("\(exifDate)"){
             exifInfo.append("\(dateConverted)")
@@ -333,6 +339,10 @@ class PhotoInfoViewModel: ObservableObject{
             }else{
                 exifInfo.append("\(photoLensModel)")
             }
+        }
+        
+        if let photoLightSource = exifLightSource{
+            exifInfo.append("\(NSLocalizedString("light_source", tableName: "AuxLocales", comment: "")): \(getLightSourceDescription(of: photoLightSource))")
         }
         
         if let photoProgram = exifProgram{
@@ -461,7 +471,25 @@ class PhotoInfoViewModel: ObservableObject{
         let iptc: JSON? = jsonMetadata?.IPTC
         let makerNikon: JSON? = jsonMetadata?.MakerNikon
         
+        if let exifData = exif{
+            var exifInfoTitle = LocalizedStringKey("EXIF")
+            if let exifVersion: [Int] = exifData.ExifVersion{
+                let version = exifVersion.map { String($0) }.joined(separator: ".")
+                exifInfoTitle = LocalizedStringKey("EXIF (V. \(version))")
+            }
+            
+            var exifInformation = PhotoViewData(titleSection: exifInfoTitle)
+            exifInformation.elements = getEXIFData(exifData)
+            imageData.append(exifInformation)
+        }
+        
         setFileProperties()
+        
+        if let nikonInfo = makerNikon{
+            var nikonSection = PhotoViewData(titleSection: "NIKON")
+            nikonSection.elements = getNikonData(nikonInfo)
+            imageData.append(nikonSection)
+        }
         
         if let tiffInfo = tiff{
             var cameraInfoSection = PhotoViewData(titleSection: "TIFF")
@@ -475,18 +503,6 @@ class PhotoInfoViewModel: ObservableObject{
             imageData.append(gpsInformation)
         }
         
-        if let exifData = exif{
-            var exifInfoTitle = LocalizedStringKey("EXIF")
-            if let exifVersion: [Int] = exifData.ExifVersion{
-                let version = exifVersion.map { String($0) }.joined(separator: ".")
-                exifInfoTitle = LocalizedStringKey("EXIF (V. \(version))")
-            }
-            
-            var exifInformation = PhotoViewData(titleSection: exifInfoTitle)
-            exifInformation.elements = getEXIFData(exifData)
-            imageData.append(exifInformation)
-        }
-        
         if let exifAuxData = exifAux{
             var exifAuxInformation = PhotoViewData(titleSection: "EXIF AUX")
             exifAuxInformation.elements = getExifAuxData(exifAuxData)
@@ -497,12 +513,6 @@ class PhotoInfoViewModel: ObservableObject{
             var iptcSection = PhotoViewData(titleSection: "IPTC")
             iptcSection.elements = getIPTCData(iptcData)
             imageData.append(iptcSection)
-        }
-        
-        if let nikonInfo = makerNikon{
-            var nikonSection = PhotoViewData(titleSection: "NIKON")
-            nikonSection.elements = getNikonData(nikonInfo)
-            imageData.append(nikonSection)
         }
         
         cleanEmptySections()
