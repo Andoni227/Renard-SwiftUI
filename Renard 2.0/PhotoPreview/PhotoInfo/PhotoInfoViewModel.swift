@@ -444,9 +444,24 @@ class PhotoInfoViewModel: ObservableObject{
     private func getNikonData(_ data: JSON) -> [String] {
         var nikonInfo: [String] = []
         let shutterCount: Int? = data.ShutterCount
+        let photoISO: String? = data.ISOSelection
+        let photoColor: String? = data.ColorMode
+        let photoQuality: String? = data.Quality
         
         if let cameraShutter = shutterCount{
             nikonInfo.append("\(NSLocalizedString("shutter_count", tableName: "AuxLocales", comment: "")): \(cameraShutter)")
+        }
+        
+        if let ISOMode = photoISO{
+            nikonInfo.append("ISO: \(ISOMode)")
+        }
+        
+        if let color = photoColor{
+            nikonInfo.append("Color Mode: \(color)")
+        }
+        
+        if let quality = photoQuality{
+            nikonInfo.append("Quality: \(quality)")
         }
         
         return nikonInfo
@@ -489,6 +504,11 @@ class PhotoInfoViewModel: ObservableObject{
         let exif: JSON? = jsonMetadata?.Exif
         let iptc: JSON? = jsonMetadata?.IPTC
         let makerNikon: JSON? = jsonMetadata?.MakerNikon
+        
+        /*if let jsonData = jsonMetadata, let data = try? JSONSerialization.data(withJSONObject: jsonData.data, options: .prettyPrinted),
+           let string = String(data: data, encoding: .utf8) {
+            print(string)
+        } */
         
         if let exifData = exif{
             var exifInfoTitle = LocalizedStringKey("EXIF")
