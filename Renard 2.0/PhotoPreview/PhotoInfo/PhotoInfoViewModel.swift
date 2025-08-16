@@ -184,8 +184,8 @@ class PhotoInfoViewModel: ObservableObject{
         let model: String? = data.Model
         let software: String? = data.Software
         let dateTime: String? = data.DateTime
-        let artist: String? = data.Artist
-        let copyright: String? = data.Copyright
+        @CleanSpaces var artist: String? = data.Artist
+        @CleanSpaces var copyright: String? = data.Copyright
         let orientation: Int? = data.Orientation
         
         if let maker = maker {
@@ -354,7 +354,10 @@ class PhotoInfoViewModel: ObservableObject{
         }
         
         if let photoLightSource = exifLightSource{
-            exifInfo.append("\(NSLocalizedString("light_source", tableName: "AuxLocales", comment: "")): \(getLightSourceDescription(of: photoLightSource))")
+            let lightSourceDescription = getLightSourceDescription(of: photoLightSource)
+            if lightSourceDescription != "" {
+                exifInfo.append("\(NSLocalizedString("light_source", tableName: "AuxLocales", comment: "")): \(lightSourceDescription)")
+            }
         }
         
         if let photoSharpness = exifSharpness{

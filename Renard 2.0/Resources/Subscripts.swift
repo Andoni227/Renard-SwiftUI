@@ -40,15 +40,23 @@ struct JSON {
 }
 
 @propertyWrapper
-struct Capitalized {
-    private var value: [String]
+struct CleanSpaces {
+    private var value: String?
 
-    var wrappedValue: [String] {
+    var wrappedValue: String? {
         get { value }
-        set { value = newValue.map({ $0.capitalized })}
+        set {
+            if let newValue = newValue,
+               newValue.replacingOccurrences(of: " ", with: "").isEmpty {
+                value = ""
+            } else {
+                value = newValue
+            }
+        }
     }
 
-    init(wrappedValue: [String]) {
-        self.value = wrappedValue.map({ $0.capitalized })
+    init(wrappedValue: String?) {
+        self.wrappedValue = wrappedValue
     }
 }
+
