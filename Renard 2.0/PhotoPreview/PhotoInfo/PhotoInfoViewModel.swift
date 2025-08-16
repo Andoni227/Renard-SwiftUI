@@ -154,17 +154,28 @@ class PhotoInfoViewModel: ObservableObject{
         return NSLocalizedString(key, tableName: "AuxLocales", comment: "")
     }
     
+    private func getLightSourceDescription(of value: Int) -> String{
+        let key = "light_source_\(value)"
+        return NSLocalizedString(key, tableName: "AuxLocales", comment: "")
+    }
+    
+    private func getSharpnessDescription(of value: Int) -> String{
+        let key: String
+        switch value {
+        case 0: key = "sharpness_0"
+        case 1: key = "sharpness_1"
+        case 2: key = "sharpness_2"
+        default: key = "sharpness_unknown"
+        }
+        return NSLocalizedString(key, tableName: "AuxLocales", comment: "")
+    }
+    
     private func cleanEmptySections(){
         for section in imageData{
             if section.elements.count == 0{
                 imageData.removeAll(where: { $0 == section })
             }
         }
-    }
-    
-    private func getLightSourceDescription(of value: Int) -> String {
-        let key = "light_source_\(value)"
-        return NSLocalizedString(key, tableName: "AuxLocales", comment: "")
     }
     
     private func getTIFFData(_ data: JSON) -> [String] {
@@ -282,6 +293,7 @@ class PhotoInfoViewModel: ObservableObject{
         let exifBodySN: String? = data.BodySerialNumber
         let exifProgram: Int? = data.ExposureProgram
         let exifLightSource: Int? = data.LightSource
+        let exifSharpness: Int? = data.Sharpness
         
         if let exifDate = exifDateTime, let dateConverted = dateConvertion("\(exifDate)"){
             exifInfo.append("\(dateConverted)")
@@ -343,6 +355,10 @@ class PhotoInfoViewModel: ObservableObject{
         
         if let photoLightSource = exifLightSource{
             exifInfo.append("\(NSLocalizedString("light_source", tableName: "AuxLocales", comment: "")): \(getLightSourceDescription(of: photoLightSource))")
+        }
+        
+        if let photoSharpness = exifSharpness{
+            exifInfo.append("\(NSLocalizedString("sharpness", tableName: "AuxLocales", comment: "")): \(getSharpnessDescription(of: photoSharpness))")
         }
         
         if let photoProgram = exifProgram{
