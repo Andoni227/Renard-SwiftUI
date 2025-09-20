@@ -55,6 +55,7 @@ struct MainDashboardView: View {
                             viewModel.isOnSelection.toggle()
                         }
                         if !viewModel.isOnSelection {
+                            viewModel.cancelConvertion()
                             viewModel.clearSelection()
                         }
                     }

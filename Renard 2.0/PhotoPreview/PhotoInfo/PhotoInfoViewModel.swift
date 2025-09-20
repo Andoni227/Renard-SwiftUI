@@ -7,12 +7,15 @@
 
 import Combine
 import Photos
-import SwiftUICore
+import SwiftUI
+import MapKit
 
 class PhotoInfoViewModel: ObservableObject{
     @Published var jsonMetadata: JSON?
     @Published var fileName: String?
     @Published var imageData: PhotosViewData = []
+    @Published var imgLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
+    
     
     private var imageSize: String?
     
@@ -271,6 +274,11 @@ class PhotoInfoViewModel: ObservableObject{
         if let gpsDate = gpsDate, let gpsTime = gpsTime, let dateConverted = dateConvertion("\(gpsDate) \(gpsTime)"){
             gpsInfo.append("\(dateConverted) (UTC)")
         }
+        
+       /* if let imgLongitude = longitude, let imgLatitude = latitude{
+            gpsInfo.append("MAP_SHOW")
+            imgLocation = CLLocationCoordinate2D(latitude: imgLatitude, longitude: -imgLongitude)
+        } */
         
         return gpsInfo
     }

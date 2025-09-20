@@ -3,22 +3,4 @@
    uuid = "52954F0A-300C-4707-9038-8B2C2F5D6873"
    type = "1"
    version = "2.0">
-   <Breakpoints>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "AC86BAD0-8413-4393-B3C5-7BE07F1B2313"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Renard 2.0/MainDashboard/MainDashboardView.swift"
-            startingColumnNumber = "37"
-            endingColumnNumber = "37"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-   </Breakpoints>
 </Bucket>

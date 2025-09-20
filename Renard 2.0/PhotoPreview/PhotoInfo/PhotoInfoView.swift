@@ -18,8 +18,15 @@ struct PhotoInfoView: View {
             ForEach(viewModel.imageData, content: { section in
                 Section {
                     ForEach(section.elements, id: \.self) { text in
-                        RNRDText(text: LocalizedStringKey(text), size: 15.0)
-                            .listRowBackground(Color.renardMediumBlue)
+                        if text.contains("MAP_SHOW"){
+                            if #available(iOS 17.0, *) {
+                                MapView(location: viewModel.imgLocation)
+                                    .frame(height: 200.0)
+                            }
+                        }else{
+                            RNRDText(text: LocalizedStringKey(text), size: 15.0)
+                                .listRowBackground(Color.renardMediumBlue)
+                        }
                     }
                 } header: {
                     RNRDText(text: section.titleSection, size: 15.0)

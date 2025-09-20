@@ -34,6 +34,7 @@ class MainDashboardViewModel: ObservableObject {
     
     var emptyElements: Bool = false
     private var photosMap: [String: AssetObject] = [:]
+    private var convertionTask: Task<Void, Never>?
     
     init() { }
     
@@ -148,14 +149,28 @@ class MainDashboardViewModel: ObservableObject {
             }
         }
         
-        let results = await ImageConverter().convertAndSaveAssetsAsHEIF(from: selectedAssets, progressHandler: { progress in
-            self.convertionProgress = progress
-        })
-        
-        print("SUCCESS \(results.filter({ $0.0 == true }).count) ERRORS \(results.filter({ $0.0 == false }).count)")
-        print("ERRORES: \(results.map({ $0.1 }))")
-        
-        finishProcess()
+        convertionTask = Task {
+            do {
+                let results = try await ImageConverter().convertAndSaveAssetsAsHEIF(from: selectedAssets) { progress in
+                    self.convertionProgress = progress
+                }
+                print("SUCCESS \(results.filter({ $0.0 == true }).count) ERRORS \(results.filter({ $0.0 == false }).count)")
+                print("ERRORES: \(results.map({ $0.1 }))")
+                finishProcess()
+            } catch is CancellationError {
+                print("Proceso cancelado")
+            } catch {
+                print("Error: \(error)")
+            }
+        }
+    }
+    
+    func cancelConvertion() {
+        convertionTask?.cancel()
+        self.isLoading = false
+        self.isOnSelection = false
+        self.convertionProgress = 0
+        self.loadPhotos()
     }
     
     @MainActor

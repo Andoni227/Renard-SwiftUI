@@ -77,40 +77,44 @@ class ImageConverter{
     }
     
     private func convertAndSaveAssetAsHEIF(from asset: PHAsset) async throws {
-         return try await withCheckedThrowingContinuation { continuation in
-             self.convertAndSaveAssetAsHEIF(from: asset) { success, error in
-                 if success {
-                     continuation.resume()
-                 } else {
-                     continuation.resume(throwing: error ?? NSError(domain: "HEIFConversion", code: -999, userInfo: nil))
-                 }
-             }
-         }
-     }
+        return try await withCheckedThrowingContinuation { continuation in
+            self.convertAndSaveAssetAsHEIF(from: asset) { success, error in
+                if success {
+                    continuation.resume()
+                } else {
+                    continuation.resume(throwing: error ?? NSError(domain: "HEIFConversion", code: -999, userInfo: nil))
+                }
+            }
+        }
+    }
     
     func convertAndSaveAssetsAsHEIF(
         from assets: [PHAsset],
         progressHandler: @MainActor @escaping (Double) -> Void
-    ) async -> [(Bool, Error?)] {
+    ) async throws -> [(Bool, Error?)] {
         let total = assets.count
         var completed = 0
         var results = Array<(Bool, Error?)>(repeating: (false, nil), count: total)
-
-        await withTaskGroup(of: (Int, Bool, Error?).self) { group in
+        try Task.checkCancellation()
+        try await withThrowingTaskGroup(of: (Int, Bool, Error?).self) { group in
             for (index, asset) in assets.enumerated() {
                 group.addTask {
+                    try Task.checkCancellation()
                     do {
                         try await self.convertAndSaveAssetAsHEIF(from: asset)
                         return (index, true, nil)
+                    } catch is CancellationError {
+                        throw CancellationError()
                     } catch {
                         return (index, false, error)
                     }
                 }
             }
-
-            for await (index, success, error) in group {
+            
+            for try await (index, success, error) in group {
                 results[index] = (success, error)
                 completed += 1
+                try Task.checkCancellation()
                 let progress = Double(completed) / Double(total)
                 await progressHandler(progress)
             }

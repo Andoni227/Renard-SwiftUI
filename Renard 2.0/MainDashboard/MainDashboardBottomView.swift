@@ -20,10 +20,12 @@ struct MainDashboardBottomView: View {
             HStack {
                 Spacer()
                 ZStack{
-                    Color.renardBoldBlue
-                        .frame(width: 130.0, height: 40.0)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .padding(.horizontal, 10.0)
+                    if #unavailable(iOS 26.0) {
+                        Color.renardBoldBlue
+                            .frame(width: 130.0, height: 40.0)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .padding(.horizontal, 10.0)
+                    }
                     
                     Button(action: btnAction) {
                         Image(systemName: "square.and.arrow.down.fill")
@@ -36,21 +38,21 @@ struct MainDashboardBottomView: View {
                             .foregroundColor(.white)
                     }
                     .disabled(btnDisabled)
-                    .background(Color.renardBoldBlue)
                     .padding()
+                    .addGlassEffect(cornerRadius: 20.0, legacyBackground: Color.renardBoldBlue)
                 }
             }
             
             HStack{
                 RNRDText(text: "deleteAfterSave \(photoSize)")
-                    .background(Color.renardDarkBlue)
+                    .addGlassEffect(legacyBackground: Color.renardBoldBlue)
                     .padding(.vertical, 15.0)
                 Toggle("", isOn: $deleteAfterSave)
                     .frame(width: 100.0)
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, 8.0)
-            .background(Color.renardDarkBlue)
+            .addGlassEffect(cornerRadius: 30.0, legacyBackground: Color.renardDarkBlue)
         }
     }
 }
