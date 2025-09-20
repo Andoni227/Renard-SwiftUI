@@ -2,13 +2,19 @@
   "fill-specializations" : [
     {
       "value" : {
-        "automatic-gradient" : "display-p3:0.21489,0.51998,0.69410,1.00000"
+        "linear-gradient" : [
+          "srgb:0.63248,0.87655,0.83149,1.00000",
+          "srgb:0.00000,0.29020,0.39216,1.00000"
+        ]
       }
     },
     {
       "appearance" : "dark",
       "value" : {
-        "automatic-gradient" : "display-p3:0.15480,0.37457,0.50000,1.00000"
+        "linear-gradient" : [
+          "srgb:0.00000,0.29020,0.39216,1.00000",
+          "srgb:0.00000,0.00000,0.00000,1.00000"
+        ]
       }
     }
   ],
@@ -16,6 +22,36 @@
     {
       "layers" : [
         {
+          "blend-mode-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : "normal"
+            }
+          ],
+          "fill-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "srgb:0.98490,1.00000,0.97208,0.34906"
+              }
+            },
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "solid" : "srgb:0.00000,0.83220,1.00000,1.00000"
+              }
+            }
+          ],
+          "glass-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : false
+            },
+            {
+              "appearance" : "tinted",
+              "value" : false
+            }
+          ],
           "image-name" : "IMG_8733-2.svg",
           "name" : "IMG_8733-2",
           "position" : {
@@ -27,7 +63,34 @@
           }
         },
         {
-          "glass" : false,
+          "blend-mode-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : "normal"
+            }
+          ],
+          "fill-specializations" : [
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "solid" : "srgb:0.00000,0.59406,1.00000,1.00000"
+              }
+            }
+          ],
+          "glass-specializations" : [
+            {
+              "value" : false
+            },
+            {
+              "appearance" : "dark",
+              "value" : false
+            },
+            {
+              "appearance" : "tinted",
+              "value" : true
+            }
+          ],
+          "hidden" : false,
           "image-name" : "IMG_8726.svg",
           "name" : "IMG_8726"
         }

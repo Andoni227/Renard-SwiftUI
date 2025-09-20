@@ -70,7 +70,7 @@ struct PhotoPreview: View {
         }
         .background(Color.renardDarkBlue.ignoresSafeArea())
         .toolbarBackground(Color.renardMediumBlue, for: .navigationBar)
-        .toolbarColorScheme(.light, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 RNRDText(text: "Renard", size: 16)
