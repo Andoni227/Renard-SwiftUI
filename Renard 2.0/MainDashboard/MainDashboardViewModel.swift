@@ -107,6 +107,7 @@ class MainDashboardViewModel: ObservableObject {
             self.limitedAccess = true
         } else {
             self.processComplete = true
+            
         }
     }
     
@@ -133,6 +134,10 @@ class MainDashboardViewModel: ObservableObject {
             self.availableFormats = formatsCount.sorted(by: { $0.count > $1.count })
             self.selectedFormat = self.availableFormats.first?.imageType ?? nil
         }
+    }
+    
+    func cleanCache() {
+        AppCleaner().clearTemporalDirectory()
     }
     
     @MainActor
@@ -166,10 +171,11 @@ class MainDashboardViewModel: ObservableObject {
     }
     
     func cancelConvertion() {
-        convertionTask?.cancel()
         self.isLoading = false
         self.isOnSelection = false
         self.convertionProgress = 0
+        guard let convertionTask else { return }
+        convertionTask.cancel()
         self.loadPhotos()
     }
     

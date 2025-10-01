@@ -159,6 +159,7 @@ struct MainDashboardView: View {
             Button("accept", role: .cancel) {
                 viewModel.clearSelection()
                 viewModel.loadPhotos()
+                viewModel.cleanCache()
             }
         }
         .alert("camera_permission", isPresented: $viewModel.needsPemission) {

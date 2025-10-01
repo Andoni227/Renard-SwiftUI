@@ -43,6 +43,18 @@ struct AppSettings: View {
                     })
                 }
                 .background(Color.renardBoldBlue)
+                HStack{
+                    Button(action: {
+                        viewModel.cleanCache()
+                    }, label: {
+                        Text("preferencesOption3")
+                            .font(.custom("Montserrat-Medium", size: 16))
+                            .foregroundColor(.white)
+                            .padding()
+                        Spacer()
+                    })
+                }
+                .background(Color.renardBoldBlue)
                 Spacer()
             }
         }

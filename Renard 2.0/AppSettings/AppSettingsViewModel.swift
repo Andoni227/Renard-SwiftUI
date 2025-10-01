@@ -28,4 +28,8 @@ class AppSettingsViewModel: ObservableObject{
     func changeCompression(_ value: Double) {
         UserDefaults.standard.setValue(Double(String(format: "%.1f", value)), forKey: "compressionLevel")
     }
+    
+    func cleanCache() {
+        AppCleaner().clearTemporalDirectory()
+    }
 }
