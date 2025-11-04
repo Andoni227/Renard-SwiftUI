@@ -20,6 +20,8 @@ class AppSettingsViewModel: ObservableObject{
             return "preferencesOption2_1"
         case 0.9:
             return "preferencesOption2_2"
+        case 0.99:
+            return "preferencesOption2_3"
         default:
             return "preferencesOption2_0"
         }

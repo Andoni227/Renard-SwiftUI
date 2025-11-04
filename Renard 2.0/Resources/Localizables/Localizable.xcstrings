@@ -1829,9 +1829,6 @@
         }
       }
     },
-    "My Marker" : {
-
-    },
     "NIKON" : {
       "shouldTranslate" : false
     },
@@ -2200,6 +2197,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Baixo"
+          }
+        }
+      }
+    },
+    "preferencesOption2_3" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uncompressed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin compresión"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin compresión"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "비압축"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem compressão"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem compressão"
           }
         }
       }

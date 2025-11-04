@@ -82,6 +82,7 @@ struct AppSettings: View {
             Button("preferencesOption2_0") { viewModel.changeCompression(0.7) }
             Button("preferencesOption2_1") { viewModel.changeCompression(0.8) }
             Button("preferencesOption2_2") { viewModel.changeCompression(0.9) }
+            Button("preferencesOption2_3") { viewModel.changeCompression(0.99) }
             Button("cancel", role: .cancel) {}
         }
     }

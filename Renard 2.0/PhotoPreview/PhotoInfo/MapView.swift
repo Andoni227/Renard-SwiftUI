@@ -15,7 +15,7 @@ struct MapView: View {
     
     var body: some View {
         Map(position: $camera){
-            Marker("My Marker", coordinate: location)
+            Marker("", coordinate: location)
         }
         .mapStyle(.hybrid)
         .mapStyle(.standard(elevation: .automatic))

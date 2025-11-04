@@ -9,8 +9,9 @@ import Combine
 import Photos
 import SwiftUI
 import MapKit
+import CoreLocation
 
-class PhotoInfoViewModel: ObservableObject{
+class PhotoInfoViewModel: ObservableObject, Sendable{
     @Published var jsonMetadata: JSON?
     @Published var fileName: String?
     @Published var imageData: PhotosViewData = []
@@ -29,10 +30,11 @@ class PhotoInfoViewModel: ObservableObject{
         
         imageSize = asset.getSize()
         
-        asset.requestContentEditingInput(with: options) { [self] contentEditingInput, _ in
+        asset.requestContentEditingInput(with: options) { [self] contentEditingInput, secondProperty in
             guard let input = contentEditingInput else {
                 return
             }
+            
             if let fullSizeImageURL = input.fullSizeImageURL {
                 if let imageSource = CGImageSourceCreateWithURL(fullSizeImageURL as CFURL, nil) {
                     let metadata = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [String: Any]
@@ -47,21 +49,7 @@ class PhotoInfoViewModel: ObservableObject{
     }
     
     private func getProgramDescription(of value: Int) -> String{
-        let key: String
-        switch value {
-        case 0: key = "exposure_program_0"
-        case 1: key = "exposure_program_1"
-        case 2: key = "exposure_program_2"
-        case 3: key = "exposure_program_3"
-        case 4: key = "exposure_program_4"
-        case 5: key = "exposure_program_5"
-        case 6: key = "exposure_program_6"
-        case 7: key = "exposure_program_7"
-        case 8: key = "exposure_program_8"
-        case 9: key = "exposure_program_9"
-        case 10: key = "exposure_program_10"
-        default: key = "exposure_program_0"
-        }
+        let key = "exposure_program_\(value)"
         return NSLocalizedString(key, tableName: "AuxLocales", comment: "")
     }
     
@@ -230,10 +218,12 @@ class PhotoInfoViewModel: ObservableObject{
         return cameraInfo
     }
     
-    private func getGPSData(_ data: JSON) -> [String] {
+    private func getGPSData(_ data: JSON) async -> [String] {
         var gpsInfo: [String] = []
         let latitude: Double? = data.Latitude
         let longitude: Double? = data.Longitude
+        let latitudeRef: String? = data.LatitudeRef
+        let longitudeRef: String? = data.LongitudeRef
         let altitude: Double? = data.Altitude
         let speed: Double? = data.Speed
         let speedRef: String? = data.SpeedRef
@@ -275,10 +265,31 @@ class PhotoInfoViewModel: ObservableObject{
             gpsInfo.append("\(dateConverted) (UTC)")
         }
         
-       /* if let imgLongitude = longitude, let imgLatitude = latitude{
-            gpsInfo.append("MAP_SHOW")
-            imgLocation = CLLocationCoordinate2D(latitude: imgLatitude, longitude: -imgLongitude)
-        } */
+        
+        guard var imgLongitude = longitude, var imgLatitude = latitude else {
+            return gpsInfo
+        }
+        
+        imgLongitude = longitudeRef == "W" ? -abs(imgLongitude) : abs(imgLongitude)
+        imgLatitude = latitudeRef == "S" ? -abs(imgLatitude) : abs(imgLatitude)
+        
+        let geocoder = CLGeocoder()
+        let location = CLLocation(latitude: imgLatitude, longitude: imgLongitude)
+        do {
+            let placemarks = try await geocoder.reverseGeocodeLocation(location)
+            if let placemark = placemarks.first {
+                let location = "\(placemark.thoroughfare ?? "") \(placemark.subLocality ?? "") \(placemark.locality ?? "") \(placemark.administrativeArea ?? "") \(placemark.country ?? "") \(placemark.postalCode ?? "")"
+                if location.replacingOccurrences(of: " ", with: "").count != 0{
+                    gpsInfo.append(location)
+                }
+            }
+        } catch {}
+        
+        gpsInfo.append("MAP_SHOW")
+        DispatchQueue.main.async { [self] in
+            imgLocation = CLLocationCoordinate2D(latitude: imgLatitude, longitude: imgLongitude)
+        }
+        
         
         return gpsInfo
     }
@@ -514,9 +525,9 @@ class PhotoInfoViewModel: ObservableObject{
         let makerNikon: JSON? = jsonMetadata?.MakerNikon
         
         /*if let jsonData = jsonMetadata, let data = try? JSONSerialization.data(withJSONObject: jsonData.data, options: .prettyPrinted),
-           let string = String(data: data, encoding: .utf8) {
-            print(string)
-        } */
+         let string = String(data: data, encoding: .utf8) {
+         print(string)
+         } */
         
         if let exifData = exif{
             var exifInfoTitle = LocalizedStringKey("EXIF")
@@ -544,10 +555,14 @@ class PhotoInfoViewModel: ObservableObject{
             imageData.append(cameraInfoSection)
         }
         
-        if let GPSData = GPS{
-            var gpsInformation = PhotoViewData(titleSection: "GPS")
-            gpsInformation.elements = getGPSData(GPSData)
-            imageData.append(gpsInformation)
+        Task {
+            if let GPSData = GPS{
+                var gpsInformation = PhotoViewData(titleSection: "GPS")
+                gpsInformation.elements = await getGPSData(GPSData)
+                DispatchQueue.main.async {
+                    self.imageData.append(gpsInformation)
+                }
+            }
         }
         
         if let exifAuxData = exifAux{
@@ -567,7 +582,7 @@ class PhotoInfoViewModel: ObservableObject{
 }
 
 typealias PhotosViewData = [PhotoViewData]
-struct PhotoViewData: Identifiable, Equatable {
+struct PhotoViewData: Identifiable, Equatable, @unchecked Sendable {
     var id = UUID()
     var titleSection: LocalizedStringKey
     var titleFooter: LocalizedStringKey? = nil

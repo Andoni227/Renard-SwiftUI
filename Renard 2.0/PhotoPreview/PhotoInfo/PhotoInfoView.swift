@@ -21,6 +21,7 @@ struct PhotoInfoView: View {
                         if text.contains("MAP_SHOW"){
                             if #available(iOS 17.0, *) {
                                 MapView(location: viewModel.imgLocation)
+                                    .padding(-15.0)
                                     .frame(height: 200.0)
                             }
                         }else{
