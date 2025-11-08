@@ -10,6 +10,7 @@ import Lottie
 
 struct LoadingView: View {
     @Binding var progress: Double
+    @Binding var progressTitle: LocalizedStringKey
     var showLabel: Bool
     
     var body: some View {
@@ -25,7 +26,7 @@ struct LoadingView: View {
                 .padding()
                 .padding(.horizontal, 100.0)
                 .tint(.green)
-            RNRDText(text: "loading")
+            RNRDText(text: progressTitle)
         }
     }
 }

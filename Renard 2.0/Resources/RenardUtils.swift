@@ -11,6 +11,7 @@ enum Router: Hashable, Equatable{
     case preferences
     case statistics
     case photoInfo(asset: AssetObject)
+    case videoSettings
     
     @ViewBuilder
     var view: some View {
@@ -18,6 +19,7 @@ enum Router: Hashable, Equatable{
         case .preferences: AppSettings()
         case .statistics: GalleryStatistics()
         case .photoInfo(let asset): PhotoInfoView(asset: asset)
+        case .videoSettings: VideoSettings()
         }
     }
 }
@@ -55,7 +57,7 @@ enum ImageType: String{
     case TIFF = "public.tiff"
     case WEBP = "org.webmproject.webp"
     case UNOWNED = ""
-    case NOTIMAGE = "video"
+    case VIDEO = "video"
     case AVIF = "public.avif"
     
     var name: String {
@@ -88,8 +90,8 @@ enum ImageType: String{
             return "HEIF"
         case .UNOWNED:
             return "RAW"
-        case .NOTIMAGE:
-            return "Desconocido"
+        case .VIDEO:
+            return "VIDEO"
         }
     }
 }

@@ -21,7 +21,7 @@ struct PhotoPreview: View {
                 .padding(.top, -30)
             
             if viewModel.isLoading{
-                LoadingView(progress: $viewModel.downloadProgress, showLabel: false)
+                LoadingView(progress: $viewModel.downloadProgress, progressTitle: $viewModel.downloadText, showLabel: false)
                     .padding(.bottom, 100.0)
             }else{
                 if let img = viewModel.imgPreview{
@@ -33,24 +33,37 @@ struct PhotoPreview: View {
             }
             
             VStack(spacing: 0.0){
-                Spacer()
-                HStack{
-                    RNRDText(text: "delete_after_save")
-                        .background(Color.renardDarkBlue)
-                        .padding(.vertical, 15.0)
-                    Toggle("", isOn: $viewModel.shouldDeleteAfterSave)
-                        .frame(width: 100.0)
+                    Spacer()
+                if asset.format != .VIDEO{
+                    HStack{
+                        RNRDText(text: "delete_after_save")
+                            .background(Color.renardDarkBlue)
+                            .padding(.vertical, 15.0)
+                        Toggle("", isOn: $viewModel.shouldDeleteAfterSave)
+                            .frame(width: 100.0)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 8.0)
+                    .background(Color.renardDarkBlue)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 8.0)
-                .background(Color.renardDarkBlue)
-                
                 HStack{
+                    if asset.format == .VIDEO && viewModel.isLoading{
+                        Button(action: {
+                            DispatchQueue.main.async {
+                                NotificationCenter.default.post(name: .cancelExportNotification, object: nil)
+                            }
+                        }, label: {
+                            RNRDText(text: "cancel")
+                                .background(Color.renardMediumBlue)
+                                .padding()
+                        })
+                        .frame(height: 40.0)
+                    }
                     Spacer()
                     Button(action: {
-                        viewModel.convertImage(asset: asset.asset)
+                        viewModel.startConvertion(asset: asset.asset)
                     }, label: {
-                        RNRDText(text: "save")
+                        RNRDText(text: viewModel.getSaveTitle(format: asset.format))
                             .background(Color.renardMediumBlue)
                             .padding()
                     })
@@ -62,7 +75,12 @@ struct PhotoPreview: View {
                 .background(Color.renardMediumBlue)
             }
         }
-        .alert("saveSuccess", isPresented: $viewModel.processComplete) {
+        .sheet(isPresented: $viewModel.videoExportComplete) {
+            if let video = viewModel.finalExport {
+                ShareUtility(items: [video])
+            }
+        }
+        .alert("saveSuccess", isPresented: $viewModel.photoExportComplete) {
             Button("accept", role: .cancel) {
                 dismiss()
                 dashboardVM.loadPhotos()
@@ -75,15 +93,26 @@ struct PhotoPreview: View {
             ToolbarItem(placement: .principal) {
                 RNRDText(text: "Renard", size: 16)
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(value: Router.photoInfo(asset: asset)) {
-                    Image(systemName:  "info.circle.fill")
-                        .imageScale(.large)
-                        .foregroundColor(.white)
+            if asset.format == .VIDEO {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(value: Router.videoSettings) {
+                        Image(systemName:  "gearshape")
+                            .imageScale(.large)
+                            .foregroundColor(.white)
+                    }
+                }
+            }else {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(value: Router.photoInfo(asset: asset)) {
+                        Image(systemName:  "info.circle.fill")
+                            .imageScale(.large)
+                            .foregroundColor(.white)
+                    }
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
+                    NotificationCenter.default.post(name: .cancelExportNotification, object: nil)
                     dismiss()
                 }){
                     Image(systemName:  "multiply")

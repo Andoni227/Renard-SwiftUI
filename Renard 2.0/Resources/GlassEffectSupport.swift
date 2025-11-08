@@ -18,12 +18,13 @@ struct AddGlassEffect: ViewModifier {
         }else{
             content
                 .background(legacyBackground)
+                .cornerRadius(cornerRadius)
         }
     }
 }
 
 extension View {
     func addGlassEffect(cornerRadius: CGFloat = 0, legacyBackground: Color? = nil) -> some View {
-        modifier(AddGlassEffect(cornerRadius: cornerRadius))
+        modifier(AddGlassEffect(cornerRadius: cornerRadius, legacyBackground: legacyBackground))
     }
 }

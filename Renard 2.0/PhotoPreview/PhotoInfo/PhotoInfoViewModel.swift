@@ -11,7 +11,7 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
-class PhotoInfoViewModel: ObservableObject, Sendable{
+class PhotoInfoViewModel: ObservableObject, @unchecked Sendable{
     @Published var jsonMetadata: JSON?
     @Published var fileName: String?
     @Published var imageData: PhotosViewData = []

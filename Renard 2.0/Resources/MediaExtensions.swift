@@ -20,7 +20,7 @@ extension PHAsset{
     
     func getType() -> ImageType{
         guard self.mediaType == .image else {
-            return .NOTIMAGE
+            return .VIDEO
         }
         
         guard let uniformType = self.value(forKey: "uniformTypeIdentifier") as? String else {
@@ -32,5 +32,16 @@ extension PHAsset{
         } else {
             return .UNOWNED
         }
+    }
+    
+    func getFileName() -> String?{
+        if #available(iOS 9.0, *) {
+            let resources = PHAssetResource.assetResources(for: self)
+            if let resource = resources.first(where: { $0.type == .photo }) {
+                return resource.originalFilename
+            }
+            return resources.first?.originalFilename
+        }
+        return value(forKey: "filename") as? String
     }
 }

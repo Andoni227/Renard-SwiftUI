@@ -37,22 +37,22 @@ struct MainDashboardBottomView: View {
                             .font(.custom(RenardFont.Bold.rawValue, size: 15.0))
                             .foregroundColor(.white)
                     }
+                    .addGlassEffect(cornerRadius: 20.0, legacyBackground: Color.renardBoldBlue)
                     .disabled(btnDisabled)
                     .padding()
-                    .addGlassEffect(cornerRadius: 20.0, legacyBackground: Color.renardBoldBlue)
                 }
             }
             
             HStack{
                 RNRDText(text: "deleteAfterSave \(photoSize)")
-                    .addGlassEffect(legacyBackground: Color.renardBoldBlue)
+                    .addGlassEffect(legacyBackground: Color.renardMediumBlue)
                     .padding(.vertical, 15.0)
                 Toggle("", isOn: $deleteAfterSave)
                     .frame(width: 100.0)
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, 8.0)
-            .addGlassEffect(cornerRadius: 30.0, legacyBackground: Color.renardDarkBlue)
+            .addGlassEffect(cornerRadius: 30.0, legacyBackground: Color.renardMediumBlue)
         }
     }
 }

@@ -50,17 +50,19 @@ struct MainDashboardView: View {
                     .buttonStyle(.automatic)
                     .padding()
                     Spacer()
-                    Button(viewModel.isOnSelection ? "cancel" : "selectTxt") {
-                        withAnimation{
-                            viewModel.isOnSelection.toggle()
+                    if viewModel.enableSelection{
+                        Button(viewModel.isOnSelection ? "cancel" : "selectTxt") {
+                            withAnimation{
+                                viewModel.isOnSelection.toggle()
+                            }
+                            if !viewModel.isOnSelection {
+                                viewModel.cancelConvertion()
+                                viewModel.clearSelection()
+                            }
                         }
-                        if !viewModel.isOnSelection {
-                            viewModel.cancelConvertion()
-                            viewModel.clearSelection()
-                        }
+                        .font(.custom(RenardFont.Medium.rawValue, size: 15.0))
+                        .tint(.white)
                     }
-                    .font(.custom(RenardFont.Medium.rawValue, size: 15.0))
-                    .tint(.white)
                 }
                 .overlay(
                     RNRDText(text: "Renard"),
@@ -86,7 +88,7 @@ struct MainDashboardView: View {
                     Color.renardBackgroundHeavy
                         .frame(height: 100.0)
                         .padding(.top, 22.0)
-                    LoadingView(progress: $viewModel.convertionProgress, showLabel: true)
+                    LoadingView(progress: $viewModel.convertionProgress, progressTitle: $viewModel.convertionProgressTitle, showLabel: true)
                         .padding()
                     Color.renardBackgroundHeavy
                         .ignoresSafeArea()

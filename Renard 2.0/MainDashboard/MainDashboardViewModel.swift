@@ -14,6 +14,8 @@ class MainDashboardViewModel: ObservableObject {
     @Published var availableFormats: [FormatObject] = []
     @Published var selectedFormat: ImageType? = nil{
         didSet{
+            enableSelection = selectedFormat != .VIDEO
+            isOnSelection = false
             clearSelection()
         }
     }
@@ -27,10 +29,12 @@ class MainDashboardViewModel: ObservableObject {
     @Published var deleteAfterSave: Bool = false
     @Published var isLoading: Bool = false
     @Published var convertionProgress: Double = 0.0
+    @Published var convertionProgressTitle: LocalizedStringKey = "save"
     @Published var processComplete: Bool = false
     @Published var imagesSize: Double = 0.0
     @Published var needsPemission: Bool = false
     @Published var limitedAccess: Bool = false
+    @Published var enableSelection: Bool = false
     
     var emptyElements: Bool = false
     private var photosMap: [String: AssetObject] = [:]
@@ -114,7 +118,7 @@ class MainDashboardViewModel: ObservableObject {
     func loadPhotos() {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        let fetchResult = PHAsset.fetchAssets(with: fetchOptions)
         
         var tempPhotos: [AssetObject] = []
         var formatCountDict: [ImageType: Int] = [:]
