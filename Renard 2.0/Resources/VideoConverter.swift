@@ -21,8 +21,8 @@ class VideoConverter {
             return  [.originalQualityH264, .mediumQualityH264, .lowQualityH264]
         case .H265:
             return [.originalQualityH265, .H265_4k, .H265_1080p]
-        case .H265Alpha:
-            return [.originalQualityH265Alpha, .H265_4KAlpha, .H265_1080pAlpha]
+       // case .H265Alpha:
+        //    return [.originalQualityH265Alpha, .H265_4KAlpha, .H265_1080pAlpha]
         }
     }
     

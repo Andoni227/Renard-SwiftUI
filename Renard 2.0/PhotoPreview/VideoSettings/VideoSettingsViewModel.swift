@@ -39,8 +39,8 @@ class VideoSettingsViewModel: ObservableObject{
             videoConverter.preset = .originalQualityH264
         case .H265:
             videoConverter.preset = .originalQualityH265
-        case .H265Alpha:
-            videoConverter.preset = .originalQualityH265Alpha
+       // case .H265Alpha:
+       //     videoConverter.preset = .originalQualityH265Alpha
         }
     }
     
