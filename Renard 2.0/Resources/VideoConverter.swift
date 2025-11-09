@@ -141,7 +141,7 @@ enum VideoExportPresets: String, CaseIterable {
 enum VideoExportCodec: String, CaseIterable{
     case H264 = "H.264"
     case H265 = "HEVC"
-    case H265Alpha = "HEVC_Alpha"
+  //case H265Alpha = "HEVC_Alpha" TODO: Add transparency support
 }
 
 extension Notification.Name {

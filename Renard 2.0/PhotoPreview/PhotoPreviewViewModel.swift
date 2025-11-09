@@ -63,7 +63,7 @@ class PhotoPreviewViewModel: ObservableObject{
     
     func startConvertion(asset: PHAsset){
         self.isLoading = true
-        
+        AppCleaner().clearTemporalDirectory()
         if asset.mediaType == .video {
             DispatchQueue.global(qos: .userInitiated).async {
                 VideoConverter.shared.export(asset, completion: { url, error in
