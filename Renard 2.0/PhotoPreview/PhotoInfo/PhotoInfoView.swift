@@ -27,6 +27,11 @@ struct PhotoInfoView: View {
                         }else{
                             RNRDText(text: LocalizedStringKey(text), size: 15.0)
                                 .listRowBackground(Color.renardMediumBlue)
+                                .contextMenu{
+                                    Button("Copy") {
+                                        UIPasteboard.general.string = text
+                                    }
+                                }
                         }
                     }
                 } header: {

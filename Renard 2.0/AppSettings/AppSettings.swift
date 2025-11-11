@@ -45,6 +45,21 @@ struct AppSettings: View {
                 .background(Color.renardBoldBlue)
                 HStack{
                     Button(action: {
+                        viewModel.showMapOptions = true
+                    }, label: {
+                        Text("preferencesOption4")
+                            .font(.custom("Montserrat-Medium", size: 16))
+                            .foregroundColor(.white)
+                            .padding()
+                        Text(viewModel.getPreferedMaps())
+                            .font(.custom("Montserrat-Medium", size: 16))
+                            .foregroundColor(.white)
+                        Spacer()
+                    })
+                }
+                .background(Color.renardBoldBlue)
+                HStack{
+                    Button(action: {
                         viewModel.cleanCache()
                     }, label: {
                         Text("preferencesOption3")
@@ -83,6 +98,11 @@ struct AppSettings: View {
             Button("preferencesOption2_1") { viewModel.changeCompression(0.8) }
             Button("preferencesOption2_2") { viewModel.changeCompression(0.9) }
             Button("preferencesOption2_3") { viewModel.changeCompression(0.99) }
+            Button("cancel", role: .cancel) {}
+        }
+        .confirmationDialog("preferencesOption4", isPresented: $viewModel.showMapOptions, titleVisibility: .visible) {
+            Button("Apple Maps") { viewModel.changePreferedMaps("Apple Maps") }
+            Button("Google Maps") { viewModel.changePreferedMaps("Google Maps") }
             Button("cancel", role: .cancel) {}
         }
     }

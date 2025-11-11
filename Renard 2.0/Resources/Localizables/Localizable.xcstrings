@@ -224,6 +224,9 @@
         }
       }
     },
+    "Apple Maps" : {
+      "shouldTranslate" : false
+    },
     "camera" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -424,6 +427,46 @@
     },
     "Codec" : {
       "shouldTranslate" : false
+    },
+    "Copy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "복사"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar"
+          }
+        }
+      }
     },
     "delete_after_save" : {
       "extractionState" : "manual",
@@ -958,6 +1001,9 @@
           }
         }
       }
+    },
+    "Google Maps" : {
+      "shouldTranslate" : false
     },
     "GPS" : {
       "shouldTranslate" : false
@@ -2286,37 +2332,37 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Compression Level"
+            "value" : "Image compression level"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nivel de compresión"
+            "value" : "Nivel de compresión de imágenes"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nivel de compresión"
+            "value" : "Nivel de compresión de imágenes"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "압축 수준"
+            "value" : "이미지 압축 수준"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nível de compressão"
+            "value" : "Nível de compressão de imagens"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nível de compressão"
+            "value" : "Nível de compressão de imagens"
           }
         }
       }
@@ -2561,6 +2607,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Limpar cache"
+          }
+        }
+      }
+    },
+    "preferencesOption4" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When tapping a map, open:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al hacer clic en un mapa, abrir:"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al dar dar click en un mapa abrir:"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지도를 탭하면 열기:"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ao tocar em um mapa, abrir:"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ao clicar num mapa, abrir:"
           }
         }
       }

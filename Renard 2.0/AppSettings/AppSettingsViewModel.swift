@@ -10,6 +10,7 @@ import SwiftUI
 
 class AppSettingsViewModel: ObservableObject{
     @Published var showCompressionOptions = false
+    @Published var showMapOptions = false
     
     func getCompression() -> LocalizedStringKey{
         let savedPreference = UserDefaults.standard.value(forKey: "compressionLevel") as? Double
@@ -20,7 +21,7 @@ class AppSettingsViewModel: ObservableObject{
             return "preferencesOption2_1"
         case 0.9:
             return "preferencesOption2_2"
-        case 0.99:
+        case 0.99, 1.0:
             return "preferencesOption2_3"
         default:
             return "preferencesOption2_0"
@@ -29,6 +30,14 @@ class AppSettingsViewModel: ObservableObject{
     
     func changeCompression(_ value: Double) {
         UserDefaults.standard.setValue(Double(String(format: "%.1f", value)), forKey: "compressionLevel")
+    }
+    
+    func getPreferedMaps() -> String{
+        return UserDefaults.standard.value(forKey: "preferedMaps") as? String ?? "Apple Maps"
+    }
+    
+    func changePreferedMaps(_ value: String) {
+        UserDefaults.standard.setValue(value, forKey: "preferedMaps")
     }
     
     func cleanCache() {

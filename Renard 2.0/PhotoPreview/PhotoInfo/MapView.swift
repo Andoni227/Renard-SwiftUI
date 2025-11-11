@@ -19,6 +19,23 @@ struct MapView: View {
         }
         .mapStyle(.hybrid)
         .mapStyle(.standard(elevation: .automatic))
+        .onTapGesture {
+            if UserDefaults.standard.value(forKey: "preferedMaps") as? String ?? "Apple Maps" == "Google Maps" {
+                if let mapURL = URL(string: "https://www.google.com/maps/search/?api=1&query=\(location.latitude)%2C\(location.longitude)") {
+                    UIApplication.shared.open(mapURL)
+                }
+            }else{
+                var mapItem: MKMapItem?
+                if #available(iOS 26.0, *) {
+                    mapItem = MKMapItem(location: CLLocation(latitude: location.latitude, longitude: location.longitude), address: nil)
+                } else {
+                    mapItem = MKMapItem(placemark: MKPlacemark(coordinate: location))
+                }
+                mapItem?.name = "📷"
+                mapItem?.url = URL(string: "https://www.google.com/maps/search/?api=1&query=\(location.latitude)%2C\(location.longitude)")
+                mapItem?.openInMaps()
+            }
+        }
         .onAppear{
             camera = MapCameraPosition.region(MKCoordinateRegion(center: location, latitudinalMeters: 100.0, longitudinalMeters: 100.0))
         }

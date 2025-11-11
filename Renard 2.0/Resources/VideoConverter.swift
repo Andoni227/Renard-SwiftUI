@@ -12,7 +12,7 @@ class VideoConverter {
     static let shared = VideoConverter()
     var videoVersion: PHVideoRequestOptionsVersion = .current
     var preset: VideoExportPresets = .originalQualityH265
-    var outputFileType: AVFileType = .mov
+    var outputFileType: VideoExportFormat = .MOV
     var codec: VideoExportCodec = .H265
     
     func getPresetsFor(codec: VideoExportCodec) -> [VideoExportPresets] {
@@ -55,11 +55,10 @@ class VideoConverter {
             print("Iniciando exportación: \(self.preset.rawValue)")
             
             export.outputURL = outputURL
-            export.outputFileType = self.outputFileType
+            export.outputFileType = self.outputFileType.getFileType()
 
             
-            
-             _ = NotificationCenter.default.addObserver(
+             let observer = NotificationCenter.default.addObserver(
                         forName: .cancelExportNotification,
                         object: nil,
                         queue: .main
@@ -79,6 +78,7 @@ class VideoConverter {
                 
                 export.exportAsynchronously {
                     timer.invalidate()
+                    NotificationCenter.default.removeObserver(observer)
                     switch export.status {
                     case .completed:
                         completion(outputURL, nil)
@@ -103,6 +103,7 @@ class VideoConverter {
             }
             
             export.exportAsynchronously {
+                NotificationCenter.default.removeObserver(observer)
                 switch export.status {
                 case .completed:
                     completion(outputURL, nil)
@@ -113,9 +114,7 @@ class VideoConverter {
         }
     }
     
-    private init() {
-        
-    }
+    private init() {}
 }
 
 
@@ -142,6 +141,20 @@ enum VideoExportCodec: String, CaseIterable{
     case H264 = "H.264"
     case H265 = "HEVC"
   //case H265Alpha = "HEVC_Alpha" TODO: Add transparency support
+}
+
+enum VideoExportFormat: String, CaseIterable{
+     case MP4 = ".mp4"
+     case MOV = ".mov"
+    
+     func getFileType() -> AVFileType {
+         switch self {
+         case .MP4:
+             return .mp4
+         case .MOV:
+             return .mov
+         }
+    }
 }
 
 extension Notification.Name {
