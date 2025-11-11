@@ -21,13 +21,14 @@ class PhotoInfoViewModel: ObservableObject, @unchecked Sendable{
     private var imageSize: String?
     
     func getAssetMetadata(asset: PHAsset) {
-        imageData = []
         let options = PHContentEditingInputRequestOptions()
         options.isNetworkAccessAllowed = true
         
         let resources = PHAssetResource.assetResources(for: asset)
-        self.fileName = resources.first?.originalFilename
-        
+        DispatchQueue.main.async {
+            self.imageData = []
+            self.fileName = resources.first?.originalFilename
+        }
         imageSize = asset.getSize()
         
         asset.requestContentEditingInput(with: options) { [self] contentEditingInput, secondProperty in
