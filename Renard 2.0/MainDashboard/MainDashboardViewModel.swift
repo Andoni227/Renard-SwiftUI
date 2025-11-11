@@ -116,27 +116,29 @@ class MainDashboardViewModel: ObservableObject {
     }
     
     func loadPhotos() {
-        let fetchOptions = PHFetchOptions()
-        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        let fetchResult = PHAsset.fetchAssets(with: fetchOptions)
-        
-        var tempPhotos: [AssetObject] = []
-        var formatCountDict: [ImageType: Int] = [:]
-        
-        fetchResult.enumerateObjects { (asset, _, _) in
-            let type = asset.getType()
-            let resolution = asset.getResolution()
-            tempPhotos.append(AssetObject(asset: asset, format: type, resolution: resolution))
-            formatCountDict[type, default: 0] += 1
-        }
-        
-        let formatsCount = formatCountDict.map { FormatObject(id: UUID(), imageType: $0.key, count: $0.value) }
-        
-        DispatchQueue.main.async {
-            self.photos = tempPhotos
-            self.photosMap = Dictionary(uniqueKeysWithValues: tempPhotos.map { ($0.asset.localIdentifier, $0) })
-            self.availableFormats = formatsCount.sorted(by: { $0.count > $1.count })
-            self.selectedFormat = self.availableFormats.first?.imageType ?? nil
+        DispatchQueue.global(qos: .userInitiated).async {
+            let fetchOptions = PHFetchOptions()
+            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+            let fetchResult = PHAsset.fetchAssets(with: fetchOptions)
+            
+            var tempPhotos: [AssetObject] = []
+            var formatCountDict: [ImageType: Int] = [:]
+            
+            fetchResult.enumerateObjects { (asset, _, _) in
+                let type = asset.getType()
+                let resolution = asset.getResolution()
+                tempPhotos.append(AssetObject(asset: asset, format: type, resolution: resolution))
+                formatCountDict[type, default: 0] += 1
+            }
+            
+            let formatsCount = formatCountDict.map { FormatObject(id: UUID(), imageType: $0.key, count: $0.value) }
+            
+            DispatchQueue.main.async {
+                self.photos = tempPhotos
+                self.photosMap = Dictionary(uniqueKeysWithValues: tempPhotos.map { ($0.asset.localIdentifier, $0) })
+                self.availableFormats = formatsCount.sorted(by: { $0.count > $1.count })
+                self.selectedFormat = self.availableFormats.first?.imageType ?? nil
+            }
         }
     }
     
