@@ -11,11 +11,16 @@ class VideoSettingsViewModel: ObservableObject{
     
     @Published var showCodecs = false
     @Published var showPresets = false
+    @Published var showFormats = false
     
     var videoConverter = VideoConverter.shared
     
     func getVideoCodecName() -> String{
         return videoConverter.codec.rawValue
+    }
+    
+    func getVideoFormatName() -> String{
+        return videoConverter.outputFileType.rawValue
     }
     
     func getVideoPresetName(_ preset: VideoExportPresets? = nil) -> String{
@@ -41,6 +46,15 @@ class VideoSettingsViewModel: ObservableObject{
             videoConverter.preset = .originalQualityH265
        // case .H265Alpha:
        //     videoConverter.preset = .originalQualityH265Alpha
+        }
+    }
+    
+    @ViewBuilder
+    func getFormatOptions() -> some View {
+        ForEach(VideoExportFormat.allCases, id: \.self) { format in
+            Button(format.rawValue) {
+                self.videoConverter.outputFileType = format
+            }
         }
     }
     

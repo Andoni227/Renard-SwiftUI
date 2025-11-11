@@ -28,7 +28,7 @@ struct VideoSettings: View {
                         Text(viewModel.getVideoCodecName())
                             .font(.custom("Montserrat-Medium", size: 16))
                             .foregroundColor(.white)
-                        Spacer()
+                            .padding()
                     })
                     .background(Color.renardDarkBlue)
                 }
@@ -44,7 +44,23 @@ struct VideoSettings: View {
                         Text(viewModel.getVideoPresetName())
                             .font(.custom("Montserrat-Medium", size: 16))
                             .foregroundColor(.white)
+                            .padding()
+                    })
+                    .background(Color.renardDarkBlue)
+                }
+                HStack{
+                    Button(action: {
+                        viewModel.showFormats = true
+                    }, label: {
+                        Text("Format")
+                            .font(.custom("Montserrat-Medium", size: 16))
+                            .foregroundColor(.white)
+                            .padding()
                         Spacer()
+                        Text(viewModel.getVideoFormatName())
+                            .font(.custom("Montserrat-Medium", size: 16))
+                            .foregroundColor(.white)
+                            .padding()
                     })
                     .background(Color.renardDarkBlue)
                 }
@@ -72,5 +88,6 @@ struct VideoSettings: View {
         }
         .confirmationDialog("Codec", isPresented: $viewModel.showCodecs, actions: viewModel.getCodecOptions)
         .confirmationDialog("Preset", isPresented: $viewModel.showPresets, actions: viewModel.getPresetOptions)
+        .confirmationDialog("Format", isPresented: $viewModel.showFormats, actions: viewModel.getFormatOptions)
     }
 }

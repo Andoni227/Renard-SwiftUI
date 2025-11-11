@@ -11,9 +11,21 @@ import Photos
 class VideoConverter {
     static let shared = VideoConverter()
     var videoVersion: PHVideoRequestOptionsVersion = .current
-    var preset: VideoExportPresets = .originalQualityH265
-    var outputFileType: VideoExportFormat = .MOV
-    var codec: VideoExportCodec = .H265
+    var preset: VideoExportPresets = .originalQualityH265{
+        didSet{
+            UserDefaults.standard.set(preset.rawValue, forKey: "videoPreset")
+        }
+    }
+    var outputFileType: VideoExportFormat = .MOV{
+        didSet{
+            UserDefaults.standard.set(outputFileType.rawValue, forKey: "videoFormat")
+        }
+    }
+    var codec: VideoExportCodec = .H265{
+        didSet{
+            UserDefaults.standard.set(codec.rawValue, forKey: "videoCodec")
+        }
+    }
     
     func getPresetsFor(codec: VideoExportCodec) -> [VideoExportPresets] {
         switch codec {
@@ -52,7 +64,7 @@ class VideoConverter {
                 return
             }
             
-            print("Iniciando exportación: \(self.preset.rawValue)")
+            print("Iniciando exportación: \(self.preset.rawValue) \(self.outputFileType.rawValue)")
             
             export.outputURL = outputURL
             export.outputFileType = self.outputFileType.getFileType()
@@ -82,6 +94,8 @@ class VideoConverter {
                     switch export.status {
                     case .completed:
                         completion(outputURL, nil)
+                    case .cancelled:
+                        completion(nil, VideoExportError.exportCanceled)
                     default:
                         completion(nil, export.error)
                     }
@@ -107,6 +121,8 @@ class VideoConverter {
                 switch export.status {
                 case .completed:
                     completion(outputURL, nil)
+                case .cancelled:
+                    completion(nil, VideoExportError.exportCanceled)
                 default:
                     completion(nil, VideoExportError.unknown)
                 }
@@ -114,7 +130,17 @@ class VideoConverter {
         }
     }
     
-    private init() {}
+    private init() {
+        if let savedPreset = UserDefaults.standard.string(forKey: "videoPreset") {
+            self.preset = VideoExportPresets(rawValue: savedPreset) ?? .originalQualityH265
+        }
+        if let savedCodec = UserDefaults.standard.string(forKey: "videoCodec") {
+            self.codec = VideoExportCodec(rawValue: savedCodec) ?? .H265
+        }
+        if let savedFormat = UserDefaults.standard.string(forKey: "videoFormat") {
+            self.outputFileType = VideoExportFormat(rawValue: savedFormat) ?? .MOV
+        }
+    }
 }
 
 
