@@ -19,7 +19,7 @@ struct MapView: View {
         }
         .mapStyle(.hybrid)
         .mapStyle(.standard(elevation: .automatic))
-        .onTapGesture {
+        .simultaneousGesture(TapGesture().onEnded { _ in
             if UserDefaults.standard.value(forKey: "preferedMaps") as? String ?? "Apple Maps" == "Google Maps" {
                 if let mapURL = URL(string: "https://www.google.com/maps/search/?api=1&query=\(location.latitude)%2C\(location.longitude)") {
                     UIApplication.shared.open(mapURL)
@@ -35,7 +35,7 @@ struct MapView: View {
                 mapItem?.url = URL(string: "https://www.google.com/maps/search/?api=1&query=\(location.latitude)%2C\(location.longitude)")
                 mapItem?.openInMaps()
             }
-        }
+        })
         .onAppear{
             camera = MapCameraPosition.region(MKCoordinateRegion(center: location, latitudinalMeters: 100.0, longitudinalMeters: 100.0))
         }
