@@ -5,19 +5,15 @@
 //  Created by Andoni Suarez on 20/07/25.
 //
 
-import Combine
 import Photos
 import SwiftUI
 import MapKit
-import CoreLocation
 
 class PhotoInfoViewModel: ObservableObject, @unchecked Sendable{
     @Published var jsonMetadata: JSON?
     @Published var fileName: String?
     @Published var imageData: PhotosViewData = []
     @Published var imgLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
-    
-    
     private var imageSize: String?
     
     func getAssetMetadata(asset: PHAsset) {

@@ -33,8 +33,6 @@ class VideoConverter {
             return  [.originalQualityH264, .mediumQualityH264, .lowQualityH264]
         case .H265:
             return [.originalQualityH265, .H265_4k, .H265_1080p]
-       // case .H265Alpha:
-        //    return [.originalQualityH265Alpha, .H265_4KAlpha, .H265_1080pAlpha]
         }
     }
     
@@ -58,65 +56,46 @@ class VideoConverter {
                 return
             }
             
-            let outputURL = FileManager.default.temporaryDirectory.appendingPathComponent(phAsset.getFileName() ?? UUID().uuidString + self.outputFileType.rawValue)
-            guard let export = AVAssetExportSession(asset: avAsset, presetName: self.preset.rawValue) else {
-                completion(nil, VideoExportError.unknown)
-                return
-            }
+            let fileName = phAsset.getFileName() ?? UUID().uuidString
             
-            print("Iniciando exportación: \(self.preset.rawValue) \(self.outputFileType.rawValue)")
-            
-            export.outputURL = outputURL
-            export.outputFileType = self.outputFileType.getFileType()
+            self.exportVideoFrom(asset: avAsset, fileName: fileName, completion: completion, exportProgressHandler: exportProgressHandler)
+        }
+    }
+    
+    
+    func exportVideoFrom(asset: AVAsset, fileName: String,  completion: @escaping (URL?, Error?) -> Void, exportProgressHandler: @MainActor @escaping (Double) -> Void) {
+        let outputURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName + self.outputFileType.rawValue)
+        guard let export = AVAssetExportSession(asset: asset, presetName: self.preset.rawValue) else {
+            completion(nil, VideoExportError.unknown)
+            return
+        }
+        
+        print("Iniciando exportación: \(self.preset.rawValue) \(self.outputFileType.rawValue)")
+        
+        export.outputURL = outputURL
+        export.outputFileType = self.outputFileType.getFileType()
 
-            
-             let observer = NotificationCenter.default.addObserver(
-                        forName: .cancelExportNotification,
-                        object: nil,
-                        queue: .main
-                    ) { [weak export] _ in
-                        export?.cancelExport()
-                        print("Exportación cancelada.")
-                    }
-            
-            
-            guard #available(iOS 18, *) else {
-                let timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-                    let progress = Double(export.progress)
-                    Task { @MainActor in
-                        exportProgressHandler(progress)
-                    }
+        
+         let observer = NotificationCenter.default.addObserver(
+                    forName: .cancelExportNotification,
+                    object: nil,
+                    queue: .main
+                ) { [weak export] _ in
+                    export?.cancelExport()
+                    print("Exportación cancelada.")
                 }
-                
-                export.exportAsynchronously {
-                    timer.invalidate()
-                    NotificationCenter.default.removeObserver(observer)
-                    switch export.status {
-                    case .completed:
-                        completion(outputURL, nil)
-                    case .cancelled:
-                        completion(nil, VideoExportError.exportCanceled)
-                    default:
-                        completion(nil, export.error)
-                    }
-                }
-                return
-            }
-            
-            Task {
-                for await state in export.states(updateInterval: 0.1) {
-                    switch state {
-                    case .pending, .waiting:
-                        break
-                    case .exporting(progress: let progress):
-                        await exportProgressHandler(progress.fractionCompleted)
-                    @unknown default:
-                        break
-                    }
+        
+        
+        guard #available(iOS 18, *) else {
+            let timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                let progress = Double(export.progress)
+                Task { @MainActor in
+                    exportProgressHandler(progress)
                 }
             }
             
             export.exportAsynchronously {
+                timer.invalidate()
                 NotificationCenter.default.removeObserver(observer)
                 switch export.status {
                 case .completed:
@@ -124,8 +103,34 @@ class VideoConverter {
                 case .cancelled:
                     completion(nil, VideoExportError.exportCanceled)
                 default:
-                    completion(nil, VideoExportError.unknown)
+                    completion(nil, export.error)
                 }
+            }
+            return
+        }
+        
+        Task {
+            for await state in export.states(updateInterval: 0.1) {
+                switch state {
+                case .pending, .waiting:
+                    break
+                case .exporting(progress: let progress):
+                    await exportProgressHandler(progress.fractionCompleted)
+                @unknown default:
+                    break
+                }
+            }
+        }
+        
+        export.exportAsynchronously {
+            NotificationCenter.default.removeObserver(observer)
+            switch export.status {
+            case .completed:
+                completion(outputURL, nil)
+            case .cancelled:
+                completion(nil, VideoExportError.exportCanceled)
+            default:
+                completion(nil, VideoExportError.unknown)
             }
         }
     }

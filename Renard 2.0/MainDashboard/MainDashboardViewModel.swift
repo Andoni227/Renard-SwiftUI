@@ -35,6 +35,8 @@ class MainDashboardViewModel: ObservableObject {
     @Published var needsPemission: Bool = false
     @Published var limitedAccess: Bool = false
     @Published var enableSelection: Bool = false
+    @Published var videoExportComplete: Bool = false
+    @Published var finalExport: URL?
     
     var emptyElements: Bool = false
     private var photosMap: [String: AssetObject] = [:]
@@ -144,6 +146,47 @@ class MainDashboardViewModel: ObservableObject {
     
     func cleanCache() {
         AppCleaner().clearTemporalDirectory()
+    }
+    
+    func getSearchIcon() -> String {
+        return selectedFormat == .VIDEO ? "folder" : "photo.badge.magnifyingglass"
+    }
+    
+    func getVideoFromPicker(video: URL?) {
+        guard let url = video else { return }
+        self.isLoading = true
+        
+        AppCleaner().clearTemporalDirectory()
+        
+        FileProvider().accessSecurityScopedResource(from: url) { safeURL, pathName, fileName  in
+            do {
+                let data = try Data(contentsOf: safeURL)
+                let tmp = FileManager.default.temporaryDirectory
+                    .appendingPathComponent("temp.mp4")
+                
+                try data.write(to: tmp)
+                
+                let asset = AVAsset(url: tmp)
+                VideoConverter.shared.exportVideoFrom(asset: asset, fileName: fileName, completion: { url, error in
+                    DispatchQueue.main.async { [self] in
+                        isLoading = false
+                        
+                        if let url = url {
+                            finalExport = url
+                            videoExportComplete = true
+                        }
+                    }
+                }, exportProgressHandler: { progress in
+                    DispatchQueue.main.async { [self] in
+                        convertionProgress = progress
+                        let progressDouble = Int((progress * 100).rounded())
+                        convertionProgressTitle = "exportingVideo \(progressDouble)%"
+                    }
+                })
+            } catch {
+                print("Error al copiar el archivo:", error)
+            }
+        }
     }
     
     @MainActor

@@ -8,6 +8,7 @@ struct MainDashboardView: View {
     @State private var selectedAsset: AssetObject? = nil
     @State private var photosFromPicker: [PhotosPickerItem] = []
     @State private var openPicker = false
+    @State private var openFilePicker = false
     @Environment(\.scenePhase) private var scenePhase
     let imageManager = PHImageManager.default()
     let options = PHImageRequestOptions()
@@ -31,11 +32,15 @@ struct MainDashboardView: View {
                     }
                     .buttonStyle(.automatic)
                     Button(action: {
-                        viewModel.isOnSelection = false
-                        viewModel.clearSelection()
-                        openPicker = true
+                        if viewModel.selectedFormat == .VIDEO {
+                            openFilePicker = true
+                        }else{
+                            viewModel.isOnSelection = false
+                            viewModel.clearSelection()
+                            openPicker = true
+                        }
                     }) {
-                        Image(systemName: "photo.badge.magnifyingglass")
+                        Image(systemName: viewModel.getSearchIcon())
                             .renderingMode(.template)
                             .imageScale(.large)
                             .tint(.white)
@@ -70,7 +75,7 @@ struct MainDashboardView: View {
                 )
                 .padding()
                 .background(Color.renardDarkBlue)
-
+                
                 let rows = [ GridItem() ]
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHGrid(rows: rows, spacing: 10) {
@@ -83,7 +88,7 @@ struct MainDashboardView: View {
                 }
                 .background(Color.renardDarkBlue)
                 .padding(.vertical, -8)
-
+                
                 if viewModel.isLoading {
                     Color.renardBackgroundHeavy
                         .frame(height: 100.0)
@@ -110,12 +115,12 @@ struct MainDashboardView: View {
                                     .contentShape(Rectangle())
                                     .frame(maxWidth: .infinity)
                                     .onTapGesture {
-                                            if viewModel.isOnSelection {
-                                                viewModel.toggleSelection(of: assetObject.asset)
-                                            } else {
-                                                selectedAsset = assetObject
-                                            }
+                                        if viewModel.isOnSelection {
+                                            viewModel.toggleSelection(of: assetObject.asset)
+                                        } else {
+                                            selectedAsset = assetObject
                                         }
+                                    }
                                 }
                                 if rowsOfAssets[rowIndex].count < columnsCount {
                                     ForEach(0 ..< (columnsCount - rowsOfAssets[rowIndex].count), id: \.self) { _ in
@@ -181,11 +186,28 @@ struct MainDashboardView: View {
         } message: {
             Text("limitedAccessWarning")
         }
+        .fileImporter(
+            isPresented: $openFilePicker,
+            allowedContentTypes: [.video, .quickTimeMovie, .mpeg4Movie, .mpeg2Video],
+            allowsMultipleSelection: false
+        ) { result in
+            do {
+                let urls = try result.get()
+                viewModel.getVideoFromPicker(video: urls.first)
+            } catch {
+                print("Error al importar: \(error)")
+            }
+        }
+        .sheet(isPresented: $viewModel.videoExportComplete) {
+            if let video = viewModel.finalExport {
+                ShareUtility(items: [video])
+            }
+        }
         .onChange(of: scenePhase) { scene in
             switch scene{
-             case .active: viewModel.requestAuthorizationAndLoad()
-             case .background, .inactive: break
-             @unknown default: break
+            case .active: viewModel.requestAuthorizationAndLoad()
+            case .background, .inactive: break
+            @unknown default: break
             }
         }
     }
