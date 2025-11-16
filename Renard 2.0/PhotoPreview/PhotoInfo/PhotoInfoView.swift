@@ -64,9 +64,7 @@ struct PhotoInfoView: View {
             }
         }
         .onAppear{
-            DispatchQueue.global(qos: .userInitiated).async {
-                viewModel.getAssetMetadata(asset: asset.asset)
-            }
+            viewModel.getAssetMetadata(asset: asset.asset)
         }
     }
 }
