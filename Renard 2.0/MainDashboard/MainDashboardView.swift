@@ -68,6 +68,13 @@ struct MainDashboardView: View {
                         .font(.custom(RenardFont.Medium.rawValue, size: 15.0))
                         .tint(.white)
                     }
+                    if viewModel.selectedFormat == .VIDEO && viewModel.isLoading{
+                        Button("cancel") {
+                            viewModel.cancelConvertion()
+                        }
+                        .font(.custom(RenardFont.Medium.rawValue, size: 15.0))
+                        .tint(.white)
+                    }
                 }
                 .overlay(
                     RNRDText(text: "Renard"),
@@ -83,6 +90,7 @@ struct MainDashboardView: View {
                             TitleFormatView(imageFormat: format, selectedFormat: $viewModel.selectedFormat)
                         }
                     }
+                    .disabled(viewModel.isLoading)
                     .padding(.horizontal, 15)
                     .frame(height: 35)
                 }
