@@ -9,13 +9,14 @@ import Photos
 import SwiftUI
 import MapKit
 
-class PhotoInfoViewModel: ObservableObject, @unchecked Sendable{
+class PhotoInfoViewModel: ObservableObject {
     @Published var jsonMetadata: JSON?
     @Published var fileName: String?
     @Published var imageData: PhotosViewData = []
     @Published var imgLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
     private var imageSize: String?
     
+    @MainActor
     func getAssetMetadata(asset: PHAsset) {
         let options = PHContentEditingInputRequestOptions()
         options.isNetworkAccessAllowed = true
@@ -43,6 +44,148 @@ class PhotoInfoViewModel: ObservableObject, @unchecked Sendable{
                 }
             }
         }
+    }
+    
+    @MainActor
+    private func getGPSData(_ data: JSON) async -> [String] {
+        var gpsInfo: [String] = []
+        let latitude: Double? = data.Latitude
+        let longitude: Double? = data.Longitude
+        let latitudeRef: String? = data.LatitudeRef
+        let longitudeRef: String? = data.LongitudeRef
+        let altitude: Double? = data.Altitude
+        let speed: Double? = data.Speed
+        let speedRef: String? = data.SpeedRef
+        let gpsStatus: String? = data.Status
+        let gpsDate: String? = data.DateStamp
+        let gpsTime: String? = data.TimeStamp
+        
+        if let imgLatitude = latitude{
+            gpsInfo.append("\(NSLocalizedString("latitude", tableName: "AuxLocales", comment: "")): \(imgLatitude)")
+        }
+        
+        if let imgLongitude = longitude{
+            gpsInfo.append("\(NSLocalizedString("longitude", tableName: "AuxLocales", comment: "")): \(imgLongitude)")
+        }
+        
+        if let imgAltitude = altitude{
+            gpsInfo.append("\(NSLocalizedString("altitude", tableName: "AuxLocales", comment: "")): \(imgAltitude.rounded())")
+        }
+        
+        if let imgSpeed = speed, let imgSpeedUnit = speedRef{
+            let photoSpeed = "\(NSLocalizedString("speed", tableName: "AuxLocales", comment: "")): \(imgSpeed.rounded())"
+            var photoSpeedUnit = imgSpeedUnit
+            switch imgSpeedUnit {
+            case "K": photoSpeedUnit = "km/h"
+            case "M": photoSpeedUnit = "mph"
+            case "N": photoSpeedUnit = NSLocalizedString("speed_knot", tableName: "AuxLocales", comment: "")
+            default: ()
+            }
+            
+            gpsInfo.append("\(photoSpeed) \(photoSpeedUnit)")
+        }
+        
+        if var imgGPSStatus = gpsStatus, imgGPSStatus == "V"{
+            imgGPSStatus = NSLocalizedString("gps_void", tableName: "AuxLocales", comment: "")
+            gpsInfo.append(imgGPSStatus)
+        }
+        
+        if let gpsDate = gpsDate, let gpsTime = gpsTime, let dateConverted = dateConvertion("\(gpsDate) \(gpsTime)"){
+            gpsInfo.append("\(dateConverted) (UTC)")
+        }
+        
+        
+        guard var imgLongitude = longitude, var imgLatitude = latitude else {
+            return gpsInfo
+        }
+        
+        imgLongitude = longitudeRef == "W" ? -abs(imgLongitude) : abs(imgLongitude)
+        imgLatitude = latitudeRef == "S" ? -abs(imgLatitude) : abs(imgLatitude)
+        
+        let geocoder = CLGeocoder()
+        let location = CLLocation(latitude: imgLatitude, longitude: imgLongitude)
+        do {
+            let placemarks = try await geocoder.reverseGeocodeLocation(location)
+            if let placemark = placemarks.first {
+                let location = "\(placemark.thoroughfare ?? "") \(placemark.subLocality ?? "") \(placemark.locality ?? "") \(placemark.administrativeArea ?? "") \(placemark.country ?? "") \(placemark.postalCode ?? "")"
+                if location.replacingOccurrences(of: " ", with: "").count != 0{
+                    gpsInfo.append(location)
+                }
+            }
+        } catch {}
+        
+        gpsInfo.append("MAP_SHOW")
+        DispatchQueue.main.async { [self] in
+            imgLocation = CLLocationCoordinate2D(latitude: imgLatitude, longitude: imgLongitude)
+        }
+        
+        
+        return gpsInfo
+    }
+    
+    @MainActor
+    func setImageData() {
+        let tiff: JSON? = jsonMetadata?.TIFF
+        let GPS: JSON? = jsonMetadata?.GPS
+        let exifAux: JSON? = jsonMetadata?.ExifAux
+        let exif: JSON? = jsonMetadata?.Exif
+        let iptc: JSON? = jsonMetadata?.IPTC
+        let makerNikon: JSON? = jsonMetadata?.MakerNikon
+        
+        /*if let jsonData = jsonMetadata, let data = try? JSONSerialization.data(withJSONObject: jsonData.data, options: .prettyPrinted),
+         let string = String(data: data, encoding: .utf8) {
+         print(string)
+         } */
+        
+        if let exifData = exif{
+            var exifInfoTitle = LocalizedStringKey("EXIF")
+            if let exifVersion: [Int] = exifData.ExifVersion{
+                let version = exifVersion.map { String($0) }.joined(separator: ".")
+                exifInfoTitle = LocalizedStringKey("EXIF (V. \(version))")
+            }
+            
+            var exifInformation = PhotoViewData(titleSection: exifInfoTitle)
+            exifInformation.elements = getEXIFData(exifData)
+            imageData.append(exifInformation)
+        }
+        
+        setFileProperties()
+        
+        if let nikonInfo = makerNikon{
+            var nikonSection = PhotoViewData(titleSection: "NIKON")
+            nikonSection.elements = getNikonData(nikonInfo)
+            imageData.append(nikonSection)
+        }
+        
+        if let tiffInfo = tiff{
+            var cameraInfoSection = PhotoViewData(titleSection: "TIFF")
+            cameraInfoSection.elements = getTIFFData(tiffInfo)
+            imageData.append(cameraInfoSection)
+        }
+        
+        Task {
+            if let GPSData = GPS{
+                var gpsInformation = PhotoViewData(titleSection: "GPS")
+                gpsInformation.elements = await getGPSData(GPSData)
+                DispatchQueue.main.async {
+                    self.imageData.append(gpsInformation)
+                }
+            }
+        }
+        
+        if let exifAuxData = exifAux{
+            var exifAuxInformation = PhotoViewData(titleSection: "EXIF AUX")
+            exifAuxInformation.elements = getExifAuxData(exifAuxData)
+            imageData.append(exifAuxInformation)
+        }
+        
+        if let iptcData = iptc{
+            var iptcSection = PhotoViewData(titleSection: "IPTC")
+            iptcSection.elements = getIPTCData(iptcData)
+            imageData.append(iptcSection)
+        }
+        
+        cleanEmptySections()
     }
     
     private func getProgramDescription(of value: Int) -> String{
@@ -213,82 +356,6 @@ class PhotoInfoViewModel: ObservableObject, @unchecked Sendable{
         }
         
         return cameraInfo
-    }
-    
-    private func getGPSData(_ data: JSON) async -> [String] {
-        var gpsInfo: [String] = []
-        let latitude: Double? = data.Latitude
-        let longitude: Double? = data.Longitude
-        let latitudeRef: String? = data.LatitudeRef
-        let longitudeRef: String? = data.LongitudeRef
-        let altitude: Double? = data.Altitude
-        let speed: Double? = data.Speed
-        let speedRef: String? = data.SpeedRef
-        let gpsStatus: String? = data.Status
-        let gpsDate: String? = data.DateStamp
-        let gpsTime: String? = data.TimeStamp
-        
-        if let imgLatitude = latitude{
-            gpsInfo.append("\(NSLocalizedString("latitude", tableName: "AuxLocales", comment: "")): \(imgLatitude)")
-        }
-        
-        if let imgLongitude = longitude{
-            gpsInfo.append("\(NSLocalizedString("longitude", tableName: "AuxLocales", comment: "")): \(imgLongitude)")
-        }
-        
-        if let imgAltitude = altitude{
-            gpsInfo.append("\(NSLocalizedString("altitude", tableName: "AuxLocales", comment: "")): \(imgAltitude.rounded())")
-        }
-        
-        if let imgSpeed = speed, let imgSpeedUnit = speedRef{
-            let photoSpeed = "\(NSLocalizedString("speed", tableName: "AuxLocales", comment: "")): \(imgSpeed.rounded())"
-            var photoSpeedUnit = imgSpeedUnit
-            switch imgSpeedUnit {
-            case "K": photoSpeedUnit = "km/h"
-            case "M": photoSpeedUnit = "mph"
-            case "N": photoSpeedUnit = NSLocalizedString("speed_knot", tableName: "AuxLocales", comment: "")
-            default: ()
-            }
-            
-            gpsInfo.append("\(photoSpeed) \(photoSpeedUnit)")
-        }
-        
-        if var imgGPSStatus = gpsStatus, imgGPSStatus == "V"{
-            imgGPSStatus = NSLocalizedString("gps_void", tableName: "AuxLocales", comment: "")
-            gpsInfo.append(imgGPSStatus)
-        }
-        
-        if let gpsDate = gpsDate, let gpsTime = gpsTime, let dateConverted = dateConvertion("\(gpsDate) \(gpsTime)"){
-            gpsInfo.append("\(dateConverted) (UTC)")
-        }
-        
-        
-        guard var imgLongitude = longitude, var imgLatitude = latitude else {
-            return gpsInfo
-        }
-        
-        imgLongitude = longitudeRef == "W" ? -abs(imgLongitude) : abs(imgLongitude)
-        imgLatitude = latitudeRef == "S" ? -abs(imgLatitude) : abs(imgLatitude)
-        
-        let geocoder = CLGeocoder()
-        let location = CLLocation(latitude: imgLatitude, longitude: imgLongitude)
-        do {
-            let placemarks = try await geocoder.reverseGeocodeLocation(location)
-            if let placemark = placemarks.first {
-                let location = "\(placemark.thoroughfare ?? "") \(placemark.subLocality ?? "") \(placemark.locality ?? "") \(placemark.administrativeArea ?? "") \(placemark.country ?? "") \(placemark.postalCode ?? "")"
-                if location.replacingOccurrences(of: " ", with: "").count != 0{
-                    gpsInfo.append(location)
-                }
-            }
-        } catch {}
-        
-        gpsInfo.append("MAP_SHOW")
-        DispatchQueue.main.async { [self] in
-            imgLocation = CLLocationCoordinate2D(latitude: imgLatitude, longitude: imgLongitude)
-        }
-        
-        
-        return gpsInfo
     }
     
     private func getEXIFData(_ data: JSON) -> [String] {
@@ -511,70 +578,6 @@ class PhotoInfoViewModel: ObservableObject, @unchecked Sendable{
         
         fileSection.elements = fileElements
         imageData.append(fileSection)
-    }
-    
-    func setImageData() {
-        let tiff: JSON? = jsonMetadata?.TIFF
-        let GPS: JSON? = jsonMetadata?.GPS
-        let exifAux: JSON? = jsonMetadata?.ExifAux
-        let exif: JSON? = jsonMetadata?.Exif
-        let iptc: JSON? = jsonMetadata?.IPTC
-        let makerNikon: JSON? = jsonMetadata?.MakerNikon
-        
-        /*if let jsonData = jsonMetadata, let data = try? JSONSerialization.data(withJSONObject: jsonData.data, options: .prettyPrinted),
-         let string = String(data: data, encoding: .utf8) {
-         print(string)
-         } */
-        
-        if let exifData = exif{
-            var exifInfoTitle = LocalizedStringKey("EXIF")
-            if let exifVersion: [Int] = exifData.ExifVersion{
-                let version = exifVersion.map { String($0) }.joined(separator: ".")
-                exifInfoTitle = LocalizedStringKey("EXIF (V. \(version))")
-            }
-            
-            var exifInformation = PhotoViewData(titleSection: exifInfoTitle)
-            exifInformation.elements = getEXIFData(exifData)
-            imageData.append(exifInformation)
-        }
-        
-        setFileProperties()
-        
-        if let nikonInfo = makerNikon{
-            var nikonSection = PhotoViewData(titleSection: "NIKON")
-            nikonSection.elements = getNikonData(nikonInfo)
-            imageData.append(nikonSection)
-        }
-        
-        if let tiffInfo = tiff{
-            var cameraInfoSection = PhotoViewData(titleSection: "TIFF")
-            cameraInfoSection.elements = getTIFFData(tiffInfo)
-            imageData.append(cameraInfoSection)
-        }
-        
-        Task {
-            if let GPSData = GPS{
-                var gpsInformation = PhotoViewData(titleSection: "GPS")
-                gpsInformation.elements = await getGPSData(GPSData)
-                DispatchQueue.main.async {
-                    self.imageData.append(gpsInformation)
-                }
-            }
-        }
-        
-        if let exifAuxData = exifAux{
-            var exifAuxInformation = PhotoViewData(titleSection: "EXIF AUX")
-            exifAuxInformation.elements = getExifAuxData(exifAuxData)
-            imageData.append(exifAuxInformation)
-        }
-        
-        if let iptcData = iptc{
-            var iptcSection = PhotoViewData(titleSection: "IPTC")
-            iptcSection.elements = getIPTCData(iptcData)
-            imageData.append(iptcSection)
-        }
-        
-        cleanEmptySections()
     }
 }
 

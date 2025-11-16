@@ -191,11 +191,17 @@ struct MainDashboardView: View {
             allowedContentTypes: [.video, .quickTimeMovie, .mpeg4Movie, .mpeg2Video],
             allowsMultipleSelection: false
         ) { result in
-            do {
-                let urls = try result.get()
-                viewModel.getVideoFromPicker(video: urls.first)
-            } catch {
-                print("Error al importar: \(error)")
+            DispatchQueue.main.async {
+                viewModel.isLoading = true
+                viewModel.convertionProgressTitle = "importingVideo"
+            }
+            Task{
+                do {
+                    let urls = try result.get()
+                    await viewModel.getVideoFromPicker(video: urls.first)
+                } catch {
+                    print("Error al importar: \(error)")
+                }
             }
         }
         .sheet(isPresented: $viewModel.videoExportComplete) {

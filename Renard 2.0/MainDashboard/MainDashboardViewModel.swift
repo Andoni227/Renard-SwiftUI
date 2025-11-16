@@ -152,13 +152,14 @@ class MainDashboardViewModel: ObservableObject {
         return selectedFormat == .VIDEO ? "folder" : "photo.badge.magnifyingglass"
     }
     
-    func getVideoFromPicker(video: URL?) {
+    @MainActor
+    func getVideoFromPicker(video: URL?) async {
         guard let url = video else { return }
         self.isLoading = true
         
         AppCleaner().clearTemporalDirectory()
         
-        FileProvider().accessSecurityScopedResource(from: url) { safeURL, pathName, fileName  in
+        await FileProvider().accessSecurityScopedResource(from: url) { safeURL, pathName, fileName  in
             do {
                 let data = try Data(contentsOf: safeURL)
                 let tmp = FileManager.default.temporaryDirectory
@@ -223,6 +224,7 @@ class MainDashboardViewModel: ObservableObject {
         self.isLoading = false
         self.isOnSelection = false
         self.convertionProgress = 0
+        NotificationCenter.default.post(name: .cancelExportNotification, object: nil)
         guard let convertionTask else { return }
         convertionTask.cancel()
         self.loadPhotos()
