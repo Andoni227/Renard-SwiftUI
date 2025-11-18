@@ -25,6 +25,11 @@ struct MainDashboardBottomView: View {
                             .frame(width: 130.0, height: 40.0)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .padding(.horizontal, 10.0)
+                    }else {
+                        RoundedRectangle(cornerRadius: 10)
+                            .glassEffect(.regular, in: .containerRelative)
+                            .frame(width: 130.0, height: 40.0)
+                            .padding(.horizontal, 10.0)
                     }
                     
                     Button(action: btnAction) {
@@ -37,7 +42,6 @@ struct MainDashboardBottomView: View {
                             .font(.custom(RenardFont.Bold.rawValue, size: 15.0))
                             .foregroundColor(.white)
                     }
-                    .addGlassEffect(cornerRadius: 20.0, legacyBackground: Color.renardBoldBlue)
                     .disabled(btnDisabled)
                     .padding()
                 }
