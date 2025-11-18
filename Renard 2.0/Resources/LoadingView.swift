@@ -27,6 +27,15 @@ struct LoadingView: View {
                 .padding(.horizontal, 100.0)
                 .tint(.green)
             RNRDText(text: progressTitle)
+            RNRDText(text: "closeApp")
+                .padding(5.0)
+                .padding(.horizontal, 45.0)
         }
     }
+}
+
+#Preview {
+    let fakeProgress = Binding.constant(0.5)
+    let fakeProgressTitle = Binding.constant(LocalizedStringKey("loading"))
+    LoadingView(progress: fakeProgress, progressTitle: fakeProgressTitle, showLabel: true)
 }

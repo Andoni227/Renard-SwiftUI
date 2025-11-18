@@ -200,6 +200,7 @@ struct MainDashboardView: View {
             allowsMultipleSelection: false
         ) { result in
             DispatchQueue.main.async {
+                viewModel.convertionProgress = 0
                 viewModel.isLoading = true
                 viewModel.convertionProgressTitle = "importingVideo"
             }
