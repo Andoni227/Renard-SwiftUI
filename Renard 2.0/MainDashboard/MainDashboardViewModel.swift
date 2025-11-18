@@ -29,7 +29,7 @@ class MainDashboardViewModel: ObservableObject {
     @Published var deleteAfterSave: Bool = false
     @Published var isLoading: Bool = false
     @Published var convertionProgress: Double = 0.0
-    @Published var convertionProgressTitle: LocalizedStringKey = "save"
+    @Published var convertionProgressTitle: LocalizedStringKey = "loading"
     @Published var processComplete: Bool = false
     @Published var imagesSize: Double = 0.0
     @Published var needsPemission: Bool = false
@@ -193,7 +193,8 @@ class MainDashboardViewModel: ObservableObject {
     @MainActor
     func startConvertion() async {
         self.isLoading = true
-        
+        self.convertionProgress = 0
+        self.convertionProgressTitle = "loading"
         var selectedAssets: [PHAsset] = []
         
         for id in selectedAssetIDs{
