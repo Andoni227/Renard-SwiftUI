@@ -30,7 +30,7 @@ class VideoConverter {
     func getPresetsFor(codec: VideoExportCodec) -> [VideoExportPresets] {
         switch codec {
         case .H264:
-            return  [.originalQualityH264, .mediumQualityH264, .lowQualityH264]
+            return  [.originalQualityH264, .mediumQualityH264, .lowQualityH264, .ultraLowQualityH264]
         case .H265:
             return [.originalQualityH265, .H265_4k, .H265_1080p]
         }
@@ -158,7 +158,8 @@ enum VideoExportError: String, Error{
 enum VideoExportPresets: String, CaseIterable {
     case originalQualityH264 = "AVAssetExportPresetHighestQuality"
     case mediumQualityH264 = "AVAssetExportPresetMediumQuality"
-    case lowQualityH264 = "AVAssetExportPresetLowQuality"
+    case lowQualityH264 = "AVAssetExportPreset1280x720"
+    case ultraLowQualityH264 = "AVAssetExportPresetLowQuality"
     
     case originalQualityH265 = "AVAssetExportPresetHEVCHighestQuality"
     case originalQualityH265Alpha = "AVAssetExportPresetHEVCHighestQualityWithAlpha"

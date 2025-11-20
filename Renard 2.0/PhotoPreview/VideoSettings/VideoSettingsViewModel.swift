@@ -31,6 +31,8 @@ class VideoSettingsViewModel: ObservableObject{
             return NSLocalizedString("medium_quality", tableName: "AuxLocales", comment: "")
         case .lowQualityH264:
             return NSLocalizedString("low_quality", tableName: "AuxLocales", comment: "")
+        case .ultraLowQualityH264:
+            return NSLocalizedString("ultra_low_quality", tableName: "AuxLocales", comment: "")
         case .H265_4k, .H265_4KAlpha:
             return NSLocalizedString("ultraHD", tableName: "AuxLocales", comment: "")
         case .H265_1080p, .H265_1080pAlpha:

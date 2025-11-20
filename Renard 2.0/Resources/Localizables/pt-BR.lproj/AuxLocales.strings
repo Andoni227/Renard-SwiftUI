@@ -92,6 +92,7 @@ sharpness_unknown = "Desconhecido";
 highest_quality = "Qualidade Máxima";
 medium_quality = "Qualidade Média";
 low_quality = "Baixa Qualidade";
+ultra_low_quality = "Qualidade mínima";
 ultraHD = "4K Alta Qualidade";
 fullHD = "1080p Alta Qualidade";
 HEVC_Alpha = "HEVC with Transparency";
