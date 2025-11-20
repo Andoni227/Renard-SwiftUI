@@ -92,6 +92,13 @@ struct AppSettings: View {
                     .font(.custom("Montserrat-Medium", size: 16))
                     .foregroundColor(.white)
             }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(value: Router.videoSettings) {
+                    Image(systemName:  "video.badge.ellipsis")
+                        .imageScale(.large)
+                        .foregroundColor(.white)
+                }
+            }
         }
         .confirmationDialog("preferencesOption2", isPresented: $viewModel.showCompressionOptions, titleVisibility: .visible) {
             Button("preferencesOption2_0") { viewModel.changeCompression(0.7) }
