@@ -259,13 +259,22 @@ class PhotoInfoViewModel: ObservableObject {
         }
     }
     
-    private func getExposureTime(of value: Decimal) -> String{
-        if value >= 1.0{
-            return "\(NSDecimalNumber(decimal: value).rounding(accordingToBehavior: nil))"
-        }else{
-            let division = Decimal(1)/abs(value)
-            let rounded = NSDecimalNumber(decimal: division).rounding(accordingToBehavior: nil)
-            return rounded == 0 ? "1":"1/\(rounded)"
+    private func getExposureTime(of value: Decimal?) -> String{
+        if let value = value{
+            if value >= 1.0{
+                return "\(NSDecimalNumber(decimal: value).rounding(accordingToBehavior: nil))"
+            }else{
+                let division = Decimal(1)/abs(value)
+                let rounded = NSDecimalNumber(decimal: division).rounding(accordingToBehavior: nil)
+                
+                if rounded == NSDecimalNumber.notANumber{
+                    return ""
+                }else{
+                    return rounded == 0 ? "1":"1/\(rounded) s"
+                }
+            }
+        }else {
+            return ""
         }
     }
     
@@ -366,7 +375,7 @@ class PhotoInfoViewModel: ObservableObject {
         let exifFNumber: Double? = data.FNumber
         let exifExposureTime: Double? = data.ExposureTime
         let exifISOSpeed: [Int]? = data.ISOSpeedRatings
-        let exifBrightness: Double? = data.BrightnessValue
+        let exifBrightness: Double? = data.ExposureBiasValue
         let exifColorSpace: Int? = data.ColorSpace
         let exifFlash: Int? = data.Flash
         let exifWhiteBalance: Int? = data.WhiteBalance
@@ -377,14 +386,26 @@ class PhotoInfoViewModel: ObservableObject {
         let exifProgram: Int? = data.ExposureProgram
         let exifLightSource: Int? = data.LightSource
         let exifSharpness: Int? = data.Sharpness
+        let exifContrast: Int? = data.Contrast
+        let exifSceneCaptureType: Int? = data.SceneCaptureType
         
         if let exifDate = exifDateTime, let dateConverted = dateConvertion("\(exifDate)"){
             exifInfo.append("\(dateConverted)")
         }
         
-        if let imgAperture = exifFNumber, let imgShutterSpeed = exifExposureTime,
-           let photoISOArray = exifISOSpeed, let photoISO = photoISOArray[safe: 0]{
-            exifInfo.append("ƒ/\(String(format: "%.1f", imgAperture)) - ISO: \(photoISO) - \(getExposureTime(of: Decimal(imgShutterSpeed))) s")
+        var aperture = ""
+        if let apertureValue = exifFNumber{
+            aperture = "ƒ/\(String(format: "%.1f", apertureValue)) - "
+        }
+        
+        var iso = ""
+        if let isoValue = exifISOSpeed?[safe: 0] {
+            iso = "ISO: \(isoValue) - "
+        }
+        
+        let parameters = "\(aperture)\(iso)\(getExposureTime(of: Decimal(exifExposureTime ?? 0.0)))"
+        if parameters.replacingOccurrences(of: " ", with: "").count > 0{
+            exifInfo.append(parameters)
         }
         
         if let imgFocalLength = exifFocalLength{
@@ -397,6 +418,14 @@ class PhotoInfoViewModel: ObservableObject {
         
         if let photoEV = exifBrightness{
             exifInfo.append("\(String(format: "%.1f", photoEV)) EV")
+        }
+        
+        if let photoContrast = exifContrast{
+            exifInfo.append("\(NSLocalizedString("contrast", tableName: "AuxLocales", comment: "")): \(photoContrast)")
+        }
+        
+        if let photoSceneCaptureType = exifSceneCaptureType, photoSceneCaptureType != 0 {
+            exifInfo.append("\(NSLocalizedString("scene_capture_type_\(photoSceneCaptureType)", tableName: "AuxLocales", comment: ""))")
         }
         
         if let photoColorProfile = exifColorSpace{
@@ -466,6 +495,8 @@ class PhotoInfoViewModel: ObservableObject {
         let exifAuxEstabilization: Int? = data.ImageStabilization
         let exifAuxLensID: Int? = data.LensID
         let exifAuxImgNumber: Int? = data.ImageNumber
+        let exifAuxLensMake: String? = data.LensMake
+        let exifAuxLensModel: String? = data.LensModel
         
         if let cameraFirmware = exifAuxFirmware{
             exifAuxInfo.append(cameraFirmware)
@@ -486,6 +517,15 @@ class PhotoInfoViewModel: ObservableObject {
             case 0:
                 exifAuxInfo.append(NSLocalizedString("image_stabilization_off", tableName: "AuxLocales", comment: ""))
             default: ()
+            }
+        }
+        
+        if let photoLensModel = exifAuxLensModel{
+            let lensText = NSLocalizedString("lens", tableName: "AuxLocales", comment: "")
+            if let photoLensMake = exifAuxLensMake{
+                exifAuxInfo.append("\(lensText): \(photoLensMake) \(photoLensModel)")
+            }else{
+                exifAuxInfo.append("\(lensText): \(photoLensModel)")
             }
         }
         

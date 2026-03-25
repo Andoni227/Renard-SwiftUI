@@ -56,12 +56,15 @@ enum ImageType: String{
     case PNG = "public.png"
     case TIFF = "public.tiff"
     case WEBP = "org.webmproject.webp"
+    case RW2 = "com.panasonic.rw2-raw-image"
     case UNOWNED = ""
     case VIDEO = "video"
     case AVIF = "public.avif"
     
     var name: String {
         switch self {
+        case .RW2:
+            return "RW2"
         case .RAW:
             return "RAW"
         case .RAF:
