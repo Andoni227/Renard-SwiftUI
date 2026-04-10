@@ -34,6 +34,8 @@ class MainDashboardViewModel: ObservableObject {
     @Published var imagesSize: Double = 0.0
     @Published var needsPemission: Bool = false
     @Published var limitedAccess: Bool = false
+    @Published var fixDateAlert: Bool = false
+    @Published var fixedDatesComplete: Bool = false
     @Published var enableSelection: Bool = false
     @Published var videoExportComplete: Bool = false
     @Published var finalExport: URL?
@@ -150,6 +152,48 @@ class MainDashboardViewModel: ObservableObject {
     
     func getSearchIcon() -> String {
         return selectedFormat == .VIDEO ? "folder" : "photo.badge.magnifyingglass"
+    }
+    
+    func getPhotoDates() async -> [String:Date] {
+        var selectedAssets: [PHAsset] = []
+        var assetsDates: [String: Date] = [:]
+        for id in selectedAssetIDs{
+            if let asset = self.photosMap[id]?.asset{
+                selectedAssets.append(asset)
+            }
+        }
+        
+        for asset in selectedAssets {
+            if let newDate = await asset.getExifDate(for: asset) {
+                assetsDates[asset.localIdentifier] = newDate
+            } else {
+                assetsDates[asset.localIdentifier] = asset.creationDate
+            }
+        }
+        
+        return assetsDates
+    }
+    
+    func startDateRepair(completion : @escaping (Bool, Error?) -> Void ) async {
+        var selectedAssets: [PHAsset] = []
+        let assetsDates = await getPhotoDates()
+        for id in selectedAssetIDs{
+            if let asset = self.photosMap[id]?.asset{
+                selectedAssets.append(asset)
+            }
+        }
+        
+        PHPhotoLibrary.shared().performChanges({
+            for asset in selectedAssets {
+                let photoDate = assetsDates[asset.localIdentifier] ?? asset.creationDate
+                let request = PHAssetChangeRequest(for: asset)
+                request.creationDate = photoDate
+            }
+        }) { success, error in
+            DispatchQueue.main.async {
+                completion(success, error)
+            }
+        }
     }
     
     @MainActor

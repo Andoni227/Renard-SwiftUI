@@ -387,7 +387,9 @@ class PhotoInfoViewModel: ObservableObject {
         let exifLightSource: Int? = data.LightSource
         let exifSharpness: Int? = data.Sharpness
         let exifContrast: Int? = data.Contrast
+        let exifSaturation: Int? = data.Saturation
         let exifSceneCaptureType: Int? = data.SceneCaptureType
+        let exifCompositeImage: Int? = data.CompositeImage
         
         if let exifDate = exifDateTime, let dateConverted = dateConvertion("\(exifDate)"){
             exifInfo.append("\(dateConverted)")
@@ -422,6 +424,14 @@ class PhotoInfoViewModel: ObservableObject {
         
         if let photoContrast = exifContrast{
             exifInfo.append("\(NSLocalizedString("contrast", tableName: "AuxLocales", comment: "")): \(photoContrast)")
+        }
+        
+        if let photoSaturation = exifSaturation{
+            exifInfo.append("\(NSLocalizedString("saturation", tableName: "AuxLocales", comment: "")): \(photoSaturation)")
+        }
+        
+        if let photoCompositeImage = exifCompositeImage, photoCompositeImage != 0{
+            exifInfo.append("\(NSLocalizedString("composite_image_\(photoCompositeImage)", tableName: "AuxLocales", comment: ""))")
         }
         
         if let photoSceneCaptureType = exifSceneCaptureType, photoSceneCaptureType != 0 {

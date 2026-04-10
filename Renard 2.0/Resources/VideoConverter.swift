@@ -56,8 +56,8 @@ class VideoConverter {
                 return
             }
             
-            let fileName = phAsset.getFileName() ?? UUID().uuidString
-            
+            var fileName = phAsset.getFileName() ?? UUID().uuidString
+            fileName = fileName.replacingOccurrences(of: ".MP4", with: "")
             self.exportVideoFrom(asset: avAsset, fileName: fileName, completion: completion, exportProgressHandler: exportProgressHandler)
         }
     }

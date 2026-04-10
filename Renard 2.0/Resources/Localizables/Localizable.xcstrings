@@ -1043,7 +1043,6 @@
       }
     },
     "fix_date_alert" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1084,7 +1083,6 @@
       }
     },
     "fixDatesComplete" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

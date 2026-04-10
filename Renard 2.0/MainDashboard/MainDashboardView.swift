@@ -20,40 +20,52 @@ struct MainDashboardView: View {
         ZStack{
             Color.renardDarkBlue
                 .ignoresSafeArea()
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading) { 
                 HStack {
-                    Button(action: {
-                        showFAQ = true
-                    }) {
-                        Image(systemName: "info.circle.fill")
-                            .renderingMode(.template)
-                            .imageScale(.large)
-                            .tint(.white)
-                    }
-                    .buttonStyle(.automatic)
-                    Button(action: {
-                        if viewModel.selectedFormat == .VIDEO {
-                            openFilePicker = true
-                        }else{
-                            viewModel.isOnSelection = false
-                            viewModel.clearSelection()
-                            openPicker = true
+                    if !viewModel.isOnSelection{
+                        Button(action: {
+                            showFAQ = true
+                        }) {
+                            Image(systemName: "info.circle.fill")
+                                .renderingMode(.template)
+                                .imageScale(.large)
+                                .tint(.white)
                         }
-                    }) {
-                        Image(systemName: viewModel.getSearchIcon())
-                            .renderingMode(.template)
-                            .imageScale(.large)
-                            .tint(.white)
-                    }
-                    .photosPicker(isPresented: $openPicker, selection: $photosFromPicker, matching: .images, photoLibrary: .shared())
-                    .onChange(of: photosFromPicker) { newItems in
-                        Task {
-                            await viewModel.convertFromPicker(newItems)
-                            photosFromPicker = []
+                        .buttonStyle(.automatic)
+                        Button(action: {
+                            if viewModel.selectedFormat == .VIDEO {
+                                openFilePicker = true
+                            }else{
+                                viewModel.isOnSelection = false
+                                viewModel.clearSelection()
+                                openPicker = true
+                            }
+                        }) {
+                            Image(systemName: viewModel.getSearchIcon())
+                                .renderingMode(.template)
+                                .imageScale(.large)
+                                .tint(.white)
                         }
+                        .photosPicker(isPresented: $openPicker, selection: $photosFromPicker, matching: .images, photoLibrary: .shared())
+                        .onChange(of: photosFromPicker) { newItems in
+                            Task {
+                                await viewModel.convertFromPicker(newItems)
+                                photosFromPicker = []
+                            }
+                        }
+                        .buttonStyle(.automatic)
+                        .padding()
+                    } else if viewModel.selectedFormat != .VIDEO && viewModel.selectedAssetIDs.count > 0 {
+                        Button(action: {
+                            viewModel.fixDateAlert = true
+                        }) {
+                            Image(systemName: "calendar.badge.checkmark")
+                                .renderingMode(.template)
+                                .imageScale(.large)
+                                .tint(.white)
+                        }
+                        .buttonStyle(.automatic)
                     }
-                    .buttonStyle(.automatic)
-                    .padding()
                     Spacer()
                     if viewModel.enableSelection{
                         Button(viewModel.isOnSelection ? "cancel" : "selectTxt") {
@@ -177,6 +189,13 @@ struct MainDashboardView: View {
                 viewModel.cleanCache()
             }
         }
+        .alert("fixDatesComplete", isPresented: $viewModel.fixedDatesComplete) {
+            Button("accept", role: .cancel) {
+                viewModel.clearSelection()
+                viewModel.loadPhotos()
+                viewModel.cleanCache()
+            }
+        }
         .alert("camera_permission", isPresented: $viewModel.needsPemission) {
             Button("accept", role: .cancel) { viewModel.openSettings() }
         }
@@ -193,6 +212,18 @@ struct MainDashboardView: View {
             }
         } message: {
             Text("limitedAccessWarning")
+        }
+        .confirmationDialog("fix_date_alert", isPresented: $viewModel.fixDateAlert , titleVisibility: .visible) {
+            Button("accept") {
+                Task { @MainActor in
+                    await viewModel.startDateRepair(completion: { success, error in
+                        if success {
+                            viewModel.fixedDatesComplete = true
+                        }
+                    })
+                }
+            }
+            Button("cancel", role: .cancel) {}
         }
         .fileImporter(
             isPresented: $openFilePicker,

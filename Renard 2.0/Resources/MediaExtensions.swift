@@ -7,7 +7,6 @@
 
 import Photos
 
-
 extension PHAsset{
     func getResolution() -> Int{
         let width = Double(self.pixelWidth)
@@ -43,5 +42,51 @@ extension PHAsset{
             return resources.first?.originalFilename
         }
         return value(forKey: "filename") as? String
+    }
+
+    func getExifDate(for asset: PHAsset) async -> Date? {
+        await withCheckedContinuation { continuation in
+            
+            guard let resource = PHAssetResource.assetResources(for: asset).first else {
+                continuation.resume(returning: nil)
+                return
+            }
+            
+            let options = PHAssetResourceRequestOptions()
+            options.isNetworkAccessAllowed = true
+            
+            let tempURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString)
+            
+            PHAssetResourceManager.default().writeData(for: resource, toFile: tempURL, options: options) { error in
+                
+                guard error == nil else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                
+                guard
+                    let source = CGImageSourceCreateWithURL(tempURL as CFURL, nil),
+                    let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+                    let exif = properties[kCGImagePropertyExifDictionary] as? [CFString: Any],
+                    let dateString = exif[kCGImagePropertyExifDateTimeDigitized] as? String
+                else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                
+                let formatter = DateFormatter()
+                var dateFormatt = "yyyy:MM:dd HH:mm:ss"
+                
+                if let exifTimeZone = exif[kCGImagePropertyExifOffsetTimeDigitized] as? String {
+                    dateFormatt = "\(dateFormatt)\(exifTimeZone)"
+                }
+                
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                formatter.dateFormat = dateFormatt
+                
+                continuation.resume(returning: formatter.date(from: dateString))
+            }
+        }
     }
 }
