@@ -49,7 +49,6 @@ struct MainDashboardBottomView: View {
             
             HStack{
                 RNRDText(text: "deleteAfterSave \(photoSize)")
-                    .addGlassEffect(legacyBackground: Color.renardMediumBlue)
                     .padding(.vertical, 15.0)
                 Toggle("", isOn: $deleteAfterSave)
                     .frame(width: 100.0)
